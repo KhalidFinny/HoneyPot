@@ -26,10 +26,14 @@ export async function syncExchangeRates() {
     if (!response.ok) throw new Error("Failed to fetch rates");
     
     const data = await response.json();
-    if (data && data.rates) {
-      await db.table("settings").put({ key: "cached_rates", value: data.rates });
-      await db.table("settings").put({ key: "last_rates_sync", value: now });
+    if (data && typeof data.rates === 'object' && !Array.isArray(data.rates)) {
+      const isValid = Object.values(data.rates).every(v => typeof v === 'number');
+      if (isValid) {
+        await db.table("settings").put({ key: "cached_rates", value: data.rates });
+        await db.table("settings").put({ key: "last_rates_sync", value: now });
+      }
     }
+
   } catch (error) {
     console.warn("Autonomous rates sync skipped (offline or error):", error);
   }
