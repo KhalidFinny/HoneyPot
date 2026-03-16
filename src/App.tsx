@@ -87,8 +87,14 @@ function App() {
     )
   }
 
-  if (settingsList === undefined) return null
-
+  if (settingsList === undefined) {
+    return (
+      <div className="fixed inset-0 bg-[#F5EFE6] flex flex-col items-center justify-center p-6 z-50 animate-fade-in">
+        <img src="/honeypot/logo2.svg" alt="HoneyPot" className="w-16 h-16 object-contain mb-3 animate-bounce-slow" />
+        <p className="text-ink font-serif font-bold text-sm">Opening the Kingdom Ledger...</p>
+      </div>
+    )
+  }
   const username = userSetting?.value
 
   if (!username) {
