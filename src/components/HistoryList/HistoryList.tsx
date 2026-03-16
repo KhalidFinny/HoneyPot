@@ -1,16 +1,44 @@
 import { Trash2 } from 'lucide-react'
-import { db } from '../data/db'
+import { db } from '../../data/db'
+import { HistoryListProps } from '../../types'
+import Skeleton from '../UI/Skeleton'
 
-import { HistoryListProps } from '../types'
+interface ExtendedHistoryListProps extends HistoryListProps {
+  isLoading?: boolean;
+}
 
-export default function HistoryList({ expenses = [], curr, t, onOpenAll }: HistoryListProps) {
+export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoading }: ExtendedHistoryListProps) {
+
   const handleDelete = async (id: any) => {
     await db.table('expenses').delete(id)
   }
 
   const symbol = curr?.symbol || '$';
 
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-sm mt-3 px-1">
+        <h3 className="text-sm font-sans font-bold text-ink mb-3 tracking-wide">{t?.tales || 'History'}</h3>
+        <div className="flex flex-col gap-2.5">
+          {[1, 2, 3].map((_, idx) => (
+            <div key={idx} className="p-3 bg-[#F5EFE6] border border-[#DCD2C3] rounded-2xl flex justify-between items-center w-full shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
+              <div className="flex items-center gap-3 flex-1">
+                <Skeleton variant="circle" className="w-10 h-10" />
+                <div className="flex-1">
+                  <Skeleton variant="text" className="w-24 h-4 mb-1" />
+                  <Skeleton variant="text" className="w-16 h-3" />
+                </div>
+              </div>
+              <Skeleton variant="rect" className="w-16 h-5" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   const getOrbStyle = (index: number) => {
+
     const list = [
       { bg: 'bg-rule/10 border-rule/30', text: 'text-ink' },
       { bg: 'bg-rule/10 border-rule/30', text: 'text-ink' }

@@ -1,65 +1,51 @@
-import { useState } from 'react'
-import { db } from '../data/db'
+import { useInputForm } from './InputForm.hooks'
 import { Check, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react'
-
-
-import { InputFormProps } from "../types"
+import { InputFormProps } from "../../types"
+import { motion } from 'framer-motion'
 
 export default function InputForm({ onComplete, t }: InputFormProps) {
-  const [title, setTitle] = useState('')
-  const [amount, setAmount] = useState('')
-  const [type, setType] = useState('income')
-  const [category, setCategory] = useState('Food')
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/\D/g, '');
-    if (!val) {
-      setAmount('');
-      return;
-    }
-    setAmount(Number(val).toLocaleString());
-  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title.trim() || !amount) return
-    
-    await db.table('expenses').add({
-      title: title.trim(),
-      amount: parseFloat(amount.replace(/,/g, '')),
-      category: type === 'income' ? 'Income' : category,
-      date: new Date().toLocaleDateString(),
-      type,
-      storyNote: 'Local log.'
-    })
-    
-    setTitle('')
-    setAmount('')
-    if (onComplete) onComplete()
-  }
+  const {
+    title,
+    setTitle,
+    amount,
+    setAmount,
+    type,
+    setType,
+    category,
+    setCategory,
+    handleAmountChange,
+    handleSubmit,
+  } = useInputForm({ onComplete })
+
 
   return (
     <form onSubmit={handleSubmit} className="w-full flex flex-col">
       {/* Type Toggle */}
       <div className="flex gap-2 mb-6 bg-rule p-1 rounded-xl">
-        <button 
+        <motion.button 
           type="button"
           onClick={() => setType('expense')}
+          whileHover={{ scale: 1.02, translateY: -1 }}
+          whileTap={{ scale: 0.98 }}
           className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg transition ${
             type === 'expense' ? 'bg-white shadow-sm text-pkd font-bold' : 'text-ink3 hover:text-ink2'
           }`}
         >
           <TrendingDown className="w-3.5 h-3.5" /> {t?.expense || 'Expense'}
-        </button>
-        <button 
+        </motion.button>
+        <motion.button 
           type="button"
           onClick={() => setType('income')}
+          whileHover={{ scale: 1.02, translateY: -1 }}
+          whileTap={{ scale: 0.98 }}
           className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg transition ${
             type === 'income' ? 'bg-white shadow-sm text-grd font-bold' : 'text-ink3 hover:text-ink2'
           }`}
         >
           <TrendingUp className="w-3.5 h-3.5" /> {t?.income || 'Income'}
-        </button>
+        </motion.button>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -108,12 +94,14 @@ export default function InputForm({ onComplete, t }: InputFormProps) {
           </div>
         )}
 
-        <button 
+        <motion.button 
           type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className="mt-4 bg-ink hover:bg-ink2 text-white font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-1 shadow-sm font-sans"
         >
           <Check className="w-4 h-4" /> {type === "income" ? (t?.save_income || "Save Income") : (t?.save_expense || "Save Expense")}
-        </button>
+        </motion.button>
       </div>
     </form>
   )

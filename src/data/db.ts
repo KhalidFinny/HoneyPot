@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 
-export const db = new Dexie('WishmintDB');
+export const db = new Dexie('HoneypotDB');
+
 
 // Version 3: Forcing a secure upgrade covering both stores
 db.version(3).stores({

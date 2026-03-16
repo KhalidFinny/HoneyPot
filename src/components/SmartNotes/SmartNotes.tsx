@@ -1,7 +1,7 @@
 import { AlertTriangle, AlertOctagon, Sparkles } from 'lucide-react'
 
 
-import { SmartNotesProps } from "../types"
+import { SmartNotesProps } from "../../types"
 
 export default function SmartNotes({ transactions = [], totalIncome = 0, totalExpense = 0, t }: SmartNotesProps) {
   

@@ -1,197 +1,295 @@
-import { useState, useEffect } from 'react'
-import { db } from './data/db'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { generateSoftAdvice } from './logic/advice'
-import BalanceBanner from './components/BalanceBanner'
-import AdvicePanel from './components/AdvicePanel'
-import InputForm from './components/InputForm'
-import HistoryList from './components/HistoryList'
-import Onboarding from './components/Onboarding'
-import BottomModal from './components/BottomModal'
-import RunwayDisplay from './components/RunwayDisplay'
-import DecideInput from './components/DecideInput'
-import BudgetMeter from './components/BudgetMeter'
-import SmartNotes from './components/SmartNotes'
-import CategoryTracker from './components/CategoryTracker'
-import HistoryManager from './components/HistoryManager'
-import { Plus, Settings } from 'lucide-react'
-import SettingsModal from './components/SettingsModal'
-import { translations, currencies } from './logic/settings'
+import { useState, useEffect, useMemo } from "react";
+
+import { motion, AnimatePresence } from "framer-motion";
+import LoadingOverlay from "./components/LoadingOverlay/LoadingOverlay";
+
+import { db } from "./data/db";
+import { useLiveQuery } from "dexie-react-hooks";
+import { generateSoftAdvice } from "./logic/advice";
+import BalanceBanner from "./components/BalanceBanner/BalanceBanner";
+import AdvicePanel from "./components/AdvicePanel/AdvicePanel";
+import InputForm from "./components/InputForm/InputForm";
+import HistoryList from "./components/HistoryList/HistoryList";
+import Onboarding from "./components/Onboarding/Onboarding";
+import BottomModal from "./components/BottomModal/BottomModal";
+import RunwayDisplay from "./components/RunwayDisplay/RunwayDisplay";
+import DecideInput from "./components/DecideInput/DecideInput";
+import BudgetMeter from "./components/BudgetMeter/BudgetMeter";
+import SmartNotes from "./components/SmartNotes/SmartNotes";
+import CategoryTracker from "./components/CategoryTracker/CategoryTracker";
+import HistoryManager from "./components/HistoryManager/HistoryManager";
+import { Plus, Settings } from "lucide-react";
+import PasscodeLock from "./components/PasscodeLock/PasscodeLock";
+import SettingsModal from "./components/SettingsModal/SettingsModal";
+import { translations, currencies } from "./logic/settings";
+import { syncExchangeRates, useRate } from "./logic/sync";
+
+
+
 
 function App() {
-  const transactions = useLiveQuery(() => db.table('expenses').reverse().toArray()) || ([] as any[])
-  const [isHistoryAllOpen, setIsHistoryAllOpen] = useState(false)
-  const settingsList = useLiveQuery(() => db.table('settings').toArray())
-  
-  // Debug log
-  console.log("Wishmint App Render Status:", { settingsList, transactions })
+  const transactionsQuery = useLiveQuery(() =>
+    db.table("expenses").reverse().toArray(),
+  );
+  const [isHistoryAllOpen, setIsHistoryAllOpen] = useState(false);
+  const isLoadingData = transactionsQuery === undefined;
+  const transactions = transactionsQuery || ([] as any[]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [timedOut, setTimedOut] = useState(false)
+  const settingsList = useLiveQuery(() => db.table("settings").toArray());
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isIntroLoading, setIsIntroLoading] = useState(true);
 
-  const userSetting = settingsList?.find((s: any) => s.key === 'username')
-  const languageSetting = settingsList?.find((s: any) => s.key === 'language')
-  const currencySetting = settingsList?.find((s: any) => s.key === 'currency')
+  useEffect(() => {
+    const timer = setTimeout(() => setIsIntroLoading(false), 1000);
+    syncExchangeRates();
+    return () => clearTimeout(timer);
+  }, []);
 
-  const lang = (languageSetting?.value as 'en' | 'id') || 'en'
-  const currencyKey = (currencySetting?.value as 'USD' | 'IDR' | 'EUR') || 'USD'
-  const t = translations[lang] || translations.en
-  const curr = currencies[currencyKey] || currencies.USD
+  // Debug log removed for performance
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+
+  const userSetting = settingsList?.find((s: any) => s.key === "username");
+  const languageSetting = settingsList?.find((s: any) => s.key === "language");
+  const currencySetting = settingsList?.find((s: any) => s.key === "currency");
+  const passcodeSetting = settingsList?.find((s: any) => s.key === "passcode");
+
+  const lang = (languageSetting?.value as "en" | "id") || "en";
+  const currencyKey =
+    (currencySetting?.value as "USD" | "IDR" | "EUR") || "USD";
+  const t = translations[lang] || translations.en;
+  const liveRate = useRate(currencyKey);
+  const curr = {
+    ...((currencies[currencyKey] || currencies.USD)),
+    rate: liveRate
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
-      if (settingsList === undefined) setTimedOut(true)
-    }, 2500)
-    return () => clearTimeout(t)
-  }, [settingsList])
+      if (settingsList === undefined) setTimedOut(true);
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [settingsList]);
 
   const handleReset = async () => {
     try {
-      db.close()
-      await db.delete()
-      window.location.reload()
+      db.close();
+      await db.delete();
+      window.location.reload();
     } catch (err) {
-      console.error("Manual Reset Failed:", err)
+      console.error("Manual Reset Failed:", err);
     }
-  }
+  };
 
-  const totalIncome = transactions
-    .filter((e: any) => e.type === 'income')
-    .reduce((sum: number, e: any) => sum + e.amount, 0)
+  const totalIncome = useMemo(
+    () =>
+      transactions
+        .filter((e: any) => e.type === "income")
+        .reduce((sum: number, e: any) => sum + e.amount, 0),
+    [transactions],
+  );
 
-  const totalExpense = transactions
-    .filter((e: any) => e.type === 'expense')
-    .reduce((sum: number, e: any) => sum + e.amount, 0)
+  const totalExpense = useMemo(
+    () =>
+      transactions
+        .filter((e: any) => e.type === "expense")
+        .reduce((sum: number, e: any) => sum + e.amount, 0),
+    [transactions],
+  );
 
-  const balance = totalIncome - totalExpense
-  const advice = generateSoftAdvice(transactions)
+  const balance = totalIncome - totalExpense;
+  const advice = generateSoftAdvice(transactions);
 
-  const currentHour = new Date().getHours()
-  let greetingKey = 'greeting_morning'
-  if (currentHour >= 12 && currentHour < 17) greetingKey = 'greeting_afternoon'
-  if (currentHour >= 17) greetingKey = 'greeting_evening'
-
-  if (timedOut && settingsList === undefined) {
-    return (
-      <div className="fixed inset-0 bg-bg flex flex-col items-center justify-center p-6 text-center animate-fade-in z-50">
-        <h2 className="text-xl font-serif font-bold text-ink mb-1">The Kingdom Ledger is Locked</h2>
-        <p className="text-xs text-ink3 mb-5 max-w-xs leading-relaxed">The continuous loading points to a stale database version lock in the browser.</p>
-        <button 
-          onClick={handleReset}
-          className="bg-pkd hover:bg-ink text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-xs"
-        >
-          Reset Database
-        </button>
-      </div>
-    )
-  }
-
-  if (settingsList === undefined) {
-    return (
-      <div className="fixed inset-0 bg-[#F5EFE6] flex flex-col items-center justify-center p-6 z-50 animate-fade-in">
-        <img src="/honeypot/logo2.svg" alt="HoneyPot" className="w-16 h-16 object-contain mb-3 animate-bounce-slow" />
-        <p className="text-ink font-serif font-bold text-sm">Opening the Kingdom Ledger...</p>
-      </div>
-    )
-  }
-  const username = userSetting?.value
-
-  if (!username) {
-    return <Onboarding />
-  }
+  const currentHour = new Date().getHours();
+  let greetingKey = "greeting_morning";
+  if (currentHour >= 12 && currentHour < 17) greetingKey = "greeting_afternoon";
+  if (currentHour >= 17) greetingKey = "greeting_evening";
 
   return (
-    <div className="relative min-h-screen bg-bg flex flex-col items-center p-6 text-ink scroll-smooth">
-      
-      {/* 🏰 Background Silhouette */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex justify-center">
-        <img 
-          src="/src/assets/tower.png" 
-          alt="Rapunzel Tower Silhouette" 
-          className="h-full w-auto object-cover object-bottom mix-blend-multiply" 
-          style={{ opacity: '0.07' }} 
-        />
-      </div>
-
-      {/* 📱 Single Column Container */}
-      <div className="relative z-10 w-full max-w-[420px] flex flex-col items-start px-4">
-        <div className="flex justify-between items-center w-full mb-8 mt-4 animate-fade-in">
-          <img src="/honeypot/logo2.svg" alt="HoneyPot" className="w-16 h-16 object-contain" />
-          <button 
-            onClick={() => setIsSettingsOpen(true)}
-            className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DCD2C3] text-ink hover:bg-[#EDDAB4]/20 transition shadow-sm"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
-
-        <header className="mb-6 text-left animate-fade-in w-full">
-          <p className="text-ink3 text-[10px] font-semibold tracking-[3px] uppercase mb-1">
-            {t[greetingKey as keyof typeof t]?.toUpperCase() || 'WELCOME'}
+    <AnimatePresence mode="wait">
+      {timedOut && settingsList === undefined ? (
+        <motion.div
+          key="timeout"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-bg flex flex-col items-center justify-center p-6 text-center z-50"
+        >
+          <h2 className="text-xl font-serif font-bold text-ink mb-1">
+            The Kingdom Ledger is Locked
+          </h2>
+          <p className="text-xs text-ink3 mb-5 max-w-xs leading-relaxed">
+            The continuous loading points to a stale database version lock in
+            the browser.
           </p>
-          <h1 className="text-3xl font-serif font-bold text-ink">
-            Hello, <span className="italic text-pkd">{username}.</span>
-          </h1>
-        </header>
+          <button
+            onClick={handleReset}
+            className="bg-pkd hover:bg-ink text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-xs"
+          >
+            Reset Database
+          </button>
+        </motion.div>
+      ) : settingsList === undefined || isIntroLoading ? (
+        <LoadingOverlay key="loading" />
+      ) : !userSetting?.value ? (
+        <motion.div
+          key="onboarding"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50"
+        >
+          <Onboarding />
+        </motion.div>
+      ) : passcodeSetting?.value && !isUnlocked ? (
+        <motion.div
+          key="lock"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50"
+        >
+          <PasscodeLock
+            correctPin={passcodeSetting.value}
+            onUnlock={() => setIsUnlocked(true)}
+          />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="main"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative min-h-screen bg-bg flex flex-col items-center p-6 text-ink scroll-smooth w-full"
+          transition={{ duration: 0.4 }}
+        >
+          {/* 🏰 Background Silhouette */}
+          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex justify-center">
+            <img
+              src="/tower.png"
+              alt="Rapunzel Tower Silhouette"
+              className="h-full w-auto object-cover object-bottom mix-blend-multiply"
+              style={{ opacity: "0.07" }}
+            />
+          </div>
 
-        {/* 01. Hero & Balance */}
-        <BalanceBanner balance={balance} totalIncome={totalIncome} totalExpense={totalExpense} curr={curr} t={t} />
-        
-        {/* 02. Soft Guide Alert */}
-        {totalExpense > totalIncome && totalIncome > 0 && <AdvicePanel advice={advice} />}
+          {/* 📱 Single Column Container */}
+          <div className="relative z-10 w-full max-w-[420px] flex flex-col items-start px-4">
+            <div className="flex justify-between items-center w-full mb-8 mt-4 animate-fade-in">
+              <img
+                src="/honeypot/logo3.svg"
+                alt="HoneyPot"
+                className="w-40 h-40 object-contain"
+              />
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DCD2C3] text-ink hover:bg-[#EDDAB4]/20 transition shadow-sm"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+            </div>
 
-        {/* 03. Tales (Transactions) */}
-        <HistoryList expenses={transactions} curr={curr} t={t} onOpenAll={() => setIsHistoryAllOpen(true)} />
+            <header className="mb-6 text-left animate-fade-in w-full">
+              <p className="text-ink3 text-[10px] font-semibold tracking-[3px] uppercase mb-1">
+                {t[greetingKey as keyof typeof t]?.toUpperCase() || "WELCOME"}
+              </p>
+              <h1 className="text-3xl font-serif font-bold text-ink">
+                Hello,{" "}
+                <span className="italic text-pkd">{userSetting?.value}.</span>
+              </h1>
+            </header>
 
-        {/* 04. Runway */}
-        <RunwayDisplay balance={balance} transactions={transactions} t={t} />
+            {/* 01. Hero & Balance */}
+            <BalanceBanner
+              balance={balance}
+              totalIncome={totalIncome}
+              totalExpense={totalExpense}
+              curr={curr}
+              t={t}
+            />
 
-        {/* 05. Decide Checker */}
-        <DecideInput balance={balance} transactions={transactions} curr={curr} t={t} />
+            {/* 02. Soft Guide Alert */}
+            {totalExpense > totalIncome && totalIncome > 0 && (
+              <AdvicePanel advice={advice} />
+            )}
 
-        {/* 06. Budget Tracker */}
-        <BudgetMeter currentExpenses={totalExpense} curr={curr} t={t} />
+            {/* 03. Tales (Transactions) */}
+            <HistoryList
+              expenses={transactions}
+              curr={curr}
+              t={t}
+              onOpenAll={() => setIsHistoryAllOpen(true)}
+              isLoading={isLoadingData}
+            />
 
-        {/* 07. Smart Notes */}
-        <SmartNotes transactions={transactions} totalIncome={totalIncome} totalExpense={totalExpense} t={t} />
-        
-        {/* Categories Bar Chart */}
-        <CategoryTracker transactions={transactions} curr={curr} t={t} />
+            {/* 04. Runway */}
+            <RunwayDisplay
+              balance={balance}
+              transactions={transactions}
+              t={t}
+            />
 
-        {/* FAB Clearance space */}
-        <div className="h-[90px] w-full" />
-      </div>
+            {/* 05. Decide Checker */}
+            <DecideInput
+              balance={balance}
+              transactions={transactions}
+              curr={curr}
+              t={t}
+            />
 
-      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+            {/* 06. Budget Tracker */}
+            <BudgetMeter currentExpenses={totalExpense} curr={curr} t={t} />
 
-      {/* ➕ Floating Action Button (FAB) */}
-      <button 
-        onClick={() => setIsModalOpen(true)}
-        className="fixed bottom-7 left-1/2 -translate-x-[calc(-210px+24px)] w-14 h-14 bg-ink text-white rounded-full flex items-center justify-center shadow-xl hover:bg-ink2 transform hover:scale-105 active:scale-95 transition z-40 max-sm:right-6 max-sm:left-auto max-sm:translate-x-0"
-      >
-        <Plus className="w-6 h-6" />
-      </button>
+            {/* 07. Smart Notes */}
+            <SmartNotes
+              transactions={transactions}
+              totalIncome={totalIncome}
+              totalExpense={totalExpense}
+              t={t}
+            />
 
-      {/* 📑 Modal Sheet */}
-      <BottomModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        title="New Tale"
-      >
-        <InputForm onComplete={() => setIsModalOpen(false)} t={t} />
-      </BottomModal>
+            {/* Categories Bar Chart */}
+            <CategoryTracker transactions={transactions} curr={curr} t={t} />
 
-      {/* 📜 Full History Modal */}
-      <BottomModal 
-        isOpen={isHistoryAllOpen} 
-        onClose={() => setIsHistoryAllOpen(false)} 
-        title={t?.tales || "History"}
-      >
-        <HistoryManager expenses={transactions} curr={curr} t={t} />
-      </BottomModal>
-    </div>
-  )
+            {/* FAB Clearance space */}
+            <div className="h-[90px] w-full" />
+          </div>
+
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+          />
+
+          {/* ➕ Floating Action Button (FAB) */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="fixed bottom-7 left-1/2 -translate-x-[calc(-210px+24px)] w-14 h-14 bg-ink text-white rounded-full flex items-center justify-center shadow-xl hover:bg-ink2 transform hover:scale-105 active:scale-95 transition z-40 max-sm:right-6 max-sm:left-auto max-sm:translate-x-0"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
+
+          {/* 📑 Modal Sheet */}
+          <BottomModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title="New Tale"
+          >
+            <InputForm onComplete={() => setIsModalOpen(false)} t={t} />
+          </BottomModal>
+
+          {/* 📜 Full History Modal */}
+          <BottomModal
+            isOpen={isHistoryAllOpen}
+            onClose={() => setIsHistoryAllOpen(false)}
+            title={t?.tales || "History"}
+          >
+            <HistoryManager expenses={transactions} curr={curr} t={t} />
+          </BottomModal>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
-export default App
+export default App;

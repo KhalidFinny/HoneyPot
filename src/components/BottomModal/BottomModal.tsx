@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 
-import { BottomModalProps } from '../types'
+import { BottomModalProps } from '../../types'
 
 export default function BottomModal({ isOpen, onClose, title, children }: BottomModalProps) {
   if (!isOpen) return null

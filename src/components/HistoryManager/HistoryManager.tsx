@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { db } from '../data/db'
+import { db } from '../../data/db'
 import { Trash2, Edit2, Check, X } from 'lucide-react'
-import { HistoryManagerProps } from '../types'
+import { HistoryManagerProps } from '../../types'
 
 export default function HistoryManager({ expenses = [], curr, t }: HistoryManagerProps) {
   const [editingId, setEditingId] = useState<any>(null);

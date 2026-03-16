@@ -6,9 +6,16 @@ export const currencies = {
   PHP: { symbol: "₱", rate: 56, decimals: 2 },
   CNY: { symbol: "¥", rate: 7.2, decimals: 2 },
   JPY: { symbol: "¥", rate: 150, decimals: 0 },
+  CAD: { symbol: "C$", rate: 1.36, decimals: 2 },
+  AUD: { symbol: "A$", rate: 1.52, decimals: 2 },
+  SGD: { symbol: "S$", rate: 1.35, decimals: 2 },
+  INR: { symbol: "₹", rate: 83, decimals: 1 },
+  KRW: { symbol: "₩", rate: 1350, decimals: 0 },
+  MYR: { symbol: "RM", rate: 4.7, decimals: 2 },
 }
 
 export const translations = {
+
   en: {
     greeting_morning: "Good morning",
     greeting_afternoon: "Good afternoon",
@@ -53,8 +60,10 @@ export const translations = {
     warn_notes_adventures: "Memories are taking up a bit of our pot — just making sure you are mindful.",
     budget_overspent: "We've overspent a bit, but we'll balance it out together.",
     budget_almost: "Almost at our limit — let's slow down a bit for now.",
-    budget_warning: "Treasury is thinning a little, let's take a safe breather."
+    budget_warning: "Treasury is thinning a little, let's take a safe breather.",
+    opening_ledger: "Opening the Kingdom Ledger..."
   },
+
   id: {
     greeting_morning: "Selamat pagi",
     greeting_afternoon: "Selamat sore",
@@ -99,6 +108,8 @@ export const translations = {
     warn_notes_adventures: "Kenangan menghabiskan sebagian dari tempat kita — menjaga agar Anda tetap hati-hati.",
     budget_overspent: "Kita belanja sedikit lebih banyak, tapi kita akan seimbangkan bersama.",
     budget_almost: "Hampir mencapai batas — ayo kurangi sedikit untuk saat ini.",
-    budget_warning: "Keuangan menipis sedikit, mari bersantai sejenak."
+    budget_warning: "Keuangan menipis sedikit, mari bersantai sejenak.",
+    opening_ledger: "Membuka Catatan Kerajaan..."
   }
+
 }

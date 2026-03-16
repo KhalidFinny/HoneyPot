@@ -1,5 +1,5 @@
 import { Utensils, Car, CreditCard, ShoppingBag, Folder } from 'lucide-react'
-import { Transaction, Currency } from '../types'
+import { Transaction, Currency } from '../../types'
 
 interface CategoryTrackerProps {
   transactions: Transaction[];

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import { db } from '../data/db'
-import { useLiveQuery } from 'dexie-react-hooks'
-import BottomModal from './BottomModal'
+import { useSettingsModal } from './SettingsModal.hooks'
+import BottomModal from '../BottomModal/BottomModal'
 import { ChevronDown } from 'lucide-react'
+import { motion } from 'framer-motion'
+
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -10,27 +10,21 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const [lang, setLang] = useState('en')
-  const [curr, setCurr] = useState('USD')
-
-  const languageSetting = useLiveQuery(() => db.table('settings').get('language'))
-  const currencySetting = useLiveQuery(() => db.table('settings').get('currency'))
-
-  useEffect(() => {
-    if (languageSetting?.value) setLang(languageSetting.value)
-  }, [languageSetting])
-
-  useEffect(() => {
-    if (currencySetting?.value) setCurr(currencySetting.value)
-  }, [currencySetting])
-
-  const handleSave = async () => {
-    await db.table('settings').put({ key: 'language', value: lang })
-    await db.table('settings').put({ key: 'currency', value: curr })
-    onClose()
-  }
+  const {
+    lang,
+    setLang,
+    curr,
+    setCurr,
+    passcode,
+    setPasscode,
+    isPinEnabled,
+    setIsPinEnabled,
+    handleSave,
+    handleReset,
+  } = useSettingsModal({ onClose })
 
   return (
+
     <BottomModal isOpen={isOpen} onClose={onClose} title="Settings & Kingdom Config">
       <div className="flex flex-col gap-5">
         <div>
@@ -63,31 +57,62 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <option value="PHP">PHP (₱)</option>
               <option value="CNY">CNY (¥)</option>
               <option value="JPY">JPY (¥)</option>
+              <option value="CAD">CAD (C$)</option>
+              <option value="AUD">AUD (A$)</option>
+              <option value="SGD">SGD (S$)</option>
+              <option value="INR">INR (₹)</option>
+              <option value="KRW">KRW (₩)</option>
+              <option value="MYR">MYR (RM)</option>
+
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink3 pointer-events-none" />
           </div>
         </div>
 
-        <button 
+        {/* 🔒 Passcode Section */}
+        <div className="border-t border-[#ECD8F0] pt-4">
+          <div className="flex justify-between items-center mb-1.5">
+            <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block">Passcode Lock</label>
+            <button 
+              type="button"
+              onClick={() => setIsPinEnabled(!isPinEnabled)}
+              className={`text-xs font-semibold px-2 py-1 rounded-lg ${isPinEnabled ? 'bg-grl text-grd border border-gr' : 'bg-[#F5EFE6] text-ink3 border border-[#DCD2C3]'}`}
+            >
+              {isPinEnabled ? 'Enabled' : 'Disabled'}
+            </button>
+          </div>
+          {isPinEnabled && (
+            <input 
+              type="text" 
+              maxLength={4}
+              placeholder="Enter 4-digit PIN"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
+            />
+          )}
+        </div>
+
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleSave}
           className="mt-4 bg-ink hover:bg-ink2 text-white font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center font-sans shadow-sm"
         >
           Save Changes
-        </button>
+        </motion.button>
 
-        <button 
-          onClick={async () => {
-            if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-              await db.table('expenses').clear();
-              await db.table('settings').clear();
-              window.location.reload();
-            }
-          }}
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleReset}
           className="mt-2 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-600 font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center font-sans shadow-sm"
         >
           Reset All Data & Start Over
-        </button>
+        </motion.button>
+
       </div>
     </BottomModal>
   )
 }
+

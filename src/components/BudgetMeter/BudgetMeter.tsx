@@ -1,8 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../data/db'
+import { db } from '../../data/db'
 import { useState, useEffect } from 'react'
 
-import { BudgetMeterProps } from '../types'
+import { BudgetMeterProps } from '../../types'
 
 export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterProps) {
   const [budget, setBudget] = useState(0) 
