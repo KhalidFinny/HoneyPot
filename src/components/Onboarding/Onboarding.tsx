@@ -6,10 +6,7 @@ import CustomSelect from "../UI/CustomSelect";
 import { db } from "../../data/db";
 import { useState } from "react";
 
-
-
 export default function Onboarding() {
-
   const {
     step,
     setStep,
@@ -31,51 +28,49 @@ export default function Onboarding() {
     error,
   } = useOnboarding();
 
-
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  const [isDark, setIsDark] = useState(
+    document.documentElement.classList.contains("dark"),
+  );
 
   const toggleDark = async () => {
     const nt = !isDark;
     setIsDark(nt);
     if (nt) {
-      document.documentElement.classList.add('dark');
-      await db.table('settings').put({ key: 'theme', value: 'dark' });
+      document.documentElement.classList.add("dark");
+      await db.table("settings").put({ key: "theme", value: "dark" });
     } else {
-      document.documentElement.classList.remove('dark');
-      await db.table('settings').put({ key: 'theme', value: 'light' });
+      document.documentElement.classList.remove("dark");
+      await db.table("settings").put({ key: "theme", value: "light" });
     }
   };
-
-
-
-
 
   const t = translations[lang] || translations.en;
 
   const calendarToday = new Date();
   const calendarYear = calendarToday.getFullYear();
   const calendarMonth = calendarToday.getMonth();
-  const calendarMonthName = calendarToday.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' });
+  const calendarMonthName = calendarToday.toLocaleString(
+    lang === "id" ? "id-ID" : "en-US",
+    { month: "long", year: "numeric" },
+  );
   const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
   const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
-  const weekdays = lang === 'id' ? ['M','S','S','R','K','J','S'] : ['S','M','T','W','T','F','S'];
-
+  const weekdays =
+    lang === "id"
+      ? ["M", "S", "S", "R", "K", "J", "S"]
+      : ["S", "M", "T", "W", "T", "F", "S"];
 
   if (step === "cover") {
     return (
       <div className="fixed inset-0 bg-bg flex flex-col items-center justify-start overflow-y-auto p-6 z-50 animate-fade-in">
-
-        <button 
+        <button
           type="button"
-          onClick={toggleDark} 
+          onClick={toggleDark}
           className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink z-10"
         >
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
         <div className="flex flex-col items-center text-center max-w-xs my-auto">
-
-
-
           <img
             src="/honeypot/logo1.svg"
             alt="HoneyPot"
@@ -100,19 +95,14 @@ export default function Onboarding() {
 
   return (
     <div className="fixed inset-0 bg-bg flex justify-center items-start overflow-y-auto p-4 z-50 animate-fade-in">
-
-
-      <button 
+      <button
         type="button"
-        onClick={toggleDark} 
+        onClick={toggleDark}
         className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink shadow-sm z-10"
       >
         {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
       <div className="bg-bg border border-border2 rounded-3xl shadow-[0_8px_32px_rgba(220,205,185,0.25)] p-6 w-full max-w-sm flex flex-col items-center my-auto">
-
-
-
         <img
           src="/honeypot/logo2.svg"
           alt="HoneyPot"
@@ -130,19 +120,19 @@ export default function Onboarding() {
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           <div className="flex gap-2 w-full">
             <div className="flex-1">
-              <CustomSelect 
+              <CustomSelect
                 label="Language"
                 value={lang}
                 onChange={(val) => setLang(val as "en" | "id")}
                 options={[
                   { value: "en", label: "English" },
-                  { value: "id", label: "Indonesian" }
+                  { value: "id", label: "Indonesian" },
                 ]}
               />
             </div>
 
             <div className="flex-1">
-              <CustomSelect 
+              <CustomSelect
                 label="Currency"
                 value={curr}
                 onChange={setCurr}
@@ -159,30 +149,25 @@ export default function Onboarding() {
                   { value: "SGD", label: "SGD (S$)" },
                   { value: "INR", label: "INR (₹)" },
                   { value: "KRW", label: "KRW (₩)" },
-                  { value: "MYR", label: "MYR (RM)" }
+                  { value: "MYR", label: "MYR (RM)" },
                 ]}
               />
             </div>
-
           </div>
 
           <div className="mt-1">
             <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
-              {lang === "id" ? "Apa Panggilan Anda?" : "Your Name?"}
+              {lang === "id" ? "Nama Anda?" : "Your Name?"}
             </label>
             <input
               type="text"
-              placeholder={
-                lang === "id" ? "Nama Anda" : "Your Name"
-              }
+              placeholder={lang === "id" ? "Nama Anda" : "Your Name"}
               value={name}
-
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-transparent border-b border-border2 focus:outline-none focus:border-ink py-1 text-base font-sans font-medium text-ink"
               required
             />
           </div>
-
 
           <div>
             <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
@@ -199,7 +184,9 @@ export default function Onboarding() {
 
           <div className="mt-2">
             <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
-              {lang === "id" ? "Tanggal Gajian (Opsional)" : "Payday (Optional)"}
+              {lang === "id"
+                ? "Tanggal Gajian (Opsional)"
+                : "Payday (Optional)"}
             </label>
             <div className="bg-bg2/50 p-2.5 rounded-xl border border-border2 mt-1">
               <p className="text-center text-[11px] font-bold text-ink2 mb-1.5">
@@ -217,14 +204,16 @@ export default function Onboarding() {
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                   const d = i + 1;
                   return (
-                    <button 
+                    <button
                       type="button"
                       key={d}
-                      onClick={() => setPayday(payday === String(d) ? "" : String(d))}
+                      onClick={() =>
+                        setPayday(payday === String(d) ? "" : String(d))
+                      }
                       className={`w-full aspect-square flex items-center justify-center text-xs font-sans font-bold rounded-lg transition-all duration-200 ${
-                        payday === String(d) 
-                          ? 'bg-ink text-bg shadow-sm scale-105' 
-                          : 'text-ink hover:bg-border2/20'
+                        payday === String(d)
+                          ? "bg-ink text-bg shadow-sm scale-105"
+                          : "text-ink hover:bg-border2/20"
                       }`}
                     >
                       {d}
@@ -233,36 +222,34 @@ export default function Onboarding() {
                 })}
               </div>
             </div>
-
           </div>
-
-
-
 
           {/* 🔒 Passcode Section */}
           <div className="border-t border-border2/30 pt-4 w-full">
-            <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block mb-1.5">Set 4-Digit Passcode (Mandatory)</label>
-            <input 
+            <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block mb-1.5">
+              Set 4-Digit Passcode (Mandatory)
+            </label>
+            <input
               type="password"
               maxLength={4}
               placeholder="0000"
               value={passcode}
-              onChange={(e) => setPasscode(e.target.value.replace(/\D/g, ''))}
+              onChange={(e) => setPasscode(e.target.value.replace(/\D/g, ""))}
               className="w-full bg-bg2/50 border border-border2 rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
             />
           </div>
 
-
-          {error && <p className="text-rdd text-xs mt-2 text-center font-semibold animate-shake">{error}</p>}
+          {error && (
+            <p className="text-rdd text-xs mt-2 text-center font-semibold animate-shake">
+              {error}
+            </p>
+          )}
 
           <motion.button
-
-
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             className="mt-4 bg-ink hover:bg-ink2 text-bg font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center font-sans shadow-sm"
-
           >
             {lang === "id" ? "Mulai Menabung" : "Start My Journey"}
           </motion.button>
