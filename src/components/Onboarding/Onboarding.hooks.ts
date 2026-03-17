@@ -13,7 +13,9 @@ export function useOnboarding() {
   const [payday, setPayday] = useState("");
   const [isPinEnabled, setIsPinEnabled] = useState(false);
   const [passcode, setPasscode] = useState("");
+  const [error, setError] = useState("");
   const liveRate = useRate(curr);
+
 
 
 
@@ -30,7 +32,12 @@ export function useOnboarding() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      setError(lang === "id" ? "Nama tidak boleh kosong" : "Name is required");
+      return;
+    }
+    setError("");
+
 
     await db.table("settings").put({ key: "language", value: lang });
     await db.table("settings").put({ key: "currency", value: curr });
@@ -84,6 +91,7 @@ export function useOnboarding() {
     handleAmountChange,
 
     handleSubmit,
-
+    error,
   };
+
 }

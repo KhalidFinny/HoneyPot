@@ -58,35 +58,27 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
           const style = getOrbStyle(idx);
           const isIncome = exp.type === 'income';
           return (
-            <div key={exp.id} className="p-3 bg-bg2 border border-border2 rounded-2xl flex justify-between items-center text-sm shadow-[0_2px_12px_rgba(220,205,185,0.15)] transition group w-full">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div>
-                  <p className="font-bold text-ink truncate max-w-[160px] text-sm">{exp.title}</p>
-                  <p className="text-ink3 text-xs font-medium capitalize mt-0.5">{t[exp.category.toLowerCase()] || exp.category}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
-                  {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
-                </p>
+             <div key={exp.id} onClick={() => onEdit && onEdit(exp)} className="p-3 bg-bg2 border border-border2 rounded-2xl flex justify-between items-center text-sm shadow-[0_2px_12px_rgba(220,205,185,0.15)] transition group w-full cursor-pointer active:scale-[0.98]">
+               <div className="flex items-center gap-3 flex-1 min-w-0">
+                 <div>
+                   <p className="font-bold text-ink truncate max-w-[160px] text-sm">{exp.title}</p>
+                   <p className="text-ink3 text-xs font-medium capitalize mt-0.5">{t[exp.category.toLowerCase()] || exp.category}</p>
+                 </div>
+               </div>
+               <div className="flex items-center gap-2">
+                 <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
+                   {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
+                 </p>
 
-                
-                <button 
-                  onClick={() => onEdit && onEdit(exp)}
-                  className="p-1.5 rounded-xl bg-ink/10 text-ink transition-opacity hover:bg-ink hover:text-white aspect-square flex items-center"
-                >
+                 <button 
+                   onClick={(e) => { e.stopPropagation(); handleDelete(exp.id); }}
+                   className="p-2.5 rounded-xl bg-rd/10 text-rd hover:bg-rd hover:text-white transition-opacity aspect-square flex items-center justify-center active:scale-95"
+                 >
+                   <Trash2 className="w-4 h-4" />
+                 </button>
+               </div>
+             </div>
 
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-                <button 
-                  onClick={() => handleDelete(exp.id)}
-                  className="p-1.5 rounded-xl bg-rd/10 text-rd transition-opacity hover:bg-rd hover:text-white aspect-square flex items-center"
-                >
-
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
           )
         })}
       </div>

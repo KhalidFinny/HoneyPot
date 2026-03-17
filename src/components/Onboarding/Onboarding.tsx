@@ -28,8 +28,9 @@ export default function Onboarding() {
     setPasscode,
     handleAmountChange,
     handleSubmit,
-
+    error,
   } = useOnboarding();
+
 
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
 
@@ -62,15 +63,16 @@ export default function Onboarding() {
 
   if (step === "cover") {
     return (
-      <div className="fixed inset-0 bg-bg2 flex flex-col items-center justify-center p-6 z-50 animate-fade-in relative">
+      <div className="fixed inset-0 bg-bg2 flex flex-col items-center justify-start overflow-y-auto p-6 z-50 animate-fade-in relative">
         <button 
           type="button"
           onClick={toggleDark} 
-          className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink"
+          className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink z-10"
         >
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
-        <div className="flex flex-col items-center text-center max-w-xs">
+        <div className="flex flex-col items-center text-center max-w-xs my-auto">
+
 
           <img
             src="/honeypot/logo1.svg"
@@ -95,15 +97,17 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="fixed inset-0 bg-bg2 flex items-center justify-center p-4 z-50 animate-fade-in relative">
+    <div className="fixed inset-0 bg-bg2 flex justify-center items-start overflow-y-auto p-4 z-50 animate-fade-in">
+
       <button 
         type="button"
         onClick={toggleDark} 
-        className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink shadow-sm"
+        className="absolute top-4 right-4 p-2 rounded-xl bg-bg border border-border2 text-ink shadow-sm z-10"
       >
         {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
-      <div className="bg-bg border border-border2 rounded-3xl shadow-[0_8px_32px_rgba(220,205,185,0.25)] p-6 w-full max-w-sm flex flex-col items-center">
+      <div className="bg-bg border border-border2 rounded-3xl shadow-[0_8px_32px_rgba(220,205,185,0.25)] p-6 w-full max-w-sm flex flex-col items-center my-auto">
+
 
 
         <img
@@ -262,7 +266,10 @@ export default function Onboarding() {
             )}
           </div>
 
+          {error && <p className="text-rdd text-xs mt-2 text-center font-semibold animate-shake">{error}</p>}
+
           <motion.button
+
 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
