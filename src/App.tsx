@@ -195,7 +195,9 @@ function App() {
           </div>
 
           {/* 📱 Single Column Container */}
-          <div className="relative z-10 w-full max-w-[420px] flex flex-col items-start px-4">
+          <div className="relative z-10 w-full max-w-[420px] flex flex-col items-center px-5 mx-auto">
+
+
             <div className="grid grid-cols-3 items-center w-full mb-8 mt-4 animate-fade-in">
               <div className="flex justify-start">
                 <img
