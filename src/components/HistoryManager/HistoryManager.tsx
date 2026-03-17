@@ -120,7 +120,7 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-end min-w-0 flex-1">
                     {isEditing ? (
                       <div className="flex items-center gap-1.5 border-b border-rule focus-within:border-ink">
                         <span className="text-xs text-ink font-bold">{symbol}</span>
@@ -132,10 +132,11 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
                         />
                       </div>
                     ) : (
-                      <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
+                      <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right`}>
                         {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                       </p>
                     )}
+
 
                     <div className="flex items-center gap-1">
                       {isEditing ? (

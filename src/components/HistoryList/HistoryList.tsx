@@ -100,8 +100,8 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
                        <p className="text-ink3 text-xs font-medium capitalize mt-0.5">{t[exp.category.toLowerCase()] || exp.category}</p>
                      </div>
                    </div>
-                   <div className="flex items-center gap-2">
-                     <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
+                   <div className="flex items-center gap-2 justify-end min-w-0 flex-1">
+                     <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right`}>
                        {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                      </p>
 
