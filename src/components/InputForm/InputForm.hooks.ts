@@ -34,7 +34,8 @@ export function useInputForm({ onComplete, editingItem, curr }: UseInputFormProp
       title: title.trim(),
       amount: parseFloat(amount.replace(/\D/g, "")) / (curr?.rate || 1),
       category: type === "income" ? "Income" : category,
-      date: editingItem?.date || new Date().toLocaleDateString(),
+      date: editingItem?.date || new Date().toISOString(),
+
 
       type,
       storyNote: editingItem?.storyNote || "Local log.",

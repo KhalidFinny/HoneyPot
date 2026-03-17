@@ -37,9 +37,9 @@ export function usePasscodeLock({ correctPin, onUnlock }: UsePasscodeLockProps) 
   const triggerBiometrics = async () => {
     try {
       if (window.PublicKeyCredential) {
-        // Biometrics placeholder, currently simulating approval.
-        alert("Biometrics placeholder, currently simulating approval.");
-        onUnlock();
+        alert("Biometrics placeholder. Please use PIN.");
+        // Removed simulation trigger
+
       }
     } catch (err) {
       console.error("Biometrics failed", err);

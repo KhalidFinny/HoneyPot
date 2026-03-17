@@ -7,6 +7,18 @@ interface CategoryTrackerProps {
   t?: any;
 }
 
+const parseSafeDate = (dStr: string) => {
+  const date = new Date(dStr);
+  if (!isNaN(date.getTime())) return date;
+  const parts = dStr.split("/");
+  if (parts.length === 3) {
+    const [m, d, y] = parts.map(Number);
+    if (m <= 12 && d <= 31) return new Date(y, m - 1, d);
+  }
+  return date;
+};
+
+
 export default function CategoryTracker({ transactions = [], curr, t }: CategoryTrackerProps) {
   const symbol = curr?.symbol || 'Rp';
   const rate = curr?.rate || 1;
@@ -20,8 +32,9 @@ export default function CategoryTracker({ transactions = [], curr, t }: Category
   
   transactions.forEach(tx => {
     if (tx.type === 'expense') {
-      const txDate = new Date(tx.date);
-      if (txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear) {
+      const txDate = parseSafeDate(tx.date);
+      if (!isNaN(txDate.getTime()) && txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear) {
+
         const cat = tx.category.toLowerCase();
         spentByCategory[cat] = (spentByCategory[cat] || 0) + tx.amount;
       }

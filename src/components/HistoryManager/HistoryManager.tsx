@@ -3,6 +3,18 @@ import { db } from '../../data/db'
 import { Trash2, Edit2, Check, X } from 'lucide-react'
 import { HistoryManagerProps } from '../../types'
 
+const parseSafeDate = (dStr: string) => {
+  const date = new Date(dStr);
+  if (!isNaN(date.getTime())) return date;
+  const parts = dStr.split("/");
+  if (parts.length === 3) {
+    const [m, d, y] = parts.map(Number);
+    if (m <= 12 && d <= 31) return new Date(y, m - 1, d);
+  }
+  return date;
+};
+
+
 export default function HistoryManager({ expenses = [], curr, t }: HistoryManagerProps) {
   const [editingId, setEditingId] = useState<any>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -35,7 +47,8 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
 
   return (
     <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[60vh] px-1 pb-4">
-      <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-none">{months.map((m, idx) => (<button key={m} onClick={() => setSelectedMonth(idx)} className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${selectedMonth === idx ? "bg-ink text-bg" : "bg-bg2 border border-border2 text-ink2"}`}>{m.slice(0, 3)}</button>))}</div> {expenses.filter(exp => new Date(exp.date).getMonth() === selectedMonth).map((exp) => {
+      <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-none">{months.map((m, idx) => (<button key={m} onClick={() => setSelectedMonth(idx)} className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${selectedMonth === idx ? "bg-ink text-bg" : "bg-bg2 border border-border2 text-ink2"}`}>{m.slice(0, 3)}</button>))}</div> {expenses.filter(exp => { const d = parseSafeDate(exp.date); return !isNaN(d.getTime()) && d.getMonth() === selectedMonth; }).map((exp) => {
+
         const isEditing = editingId === exp.id;
         const isIncome = exp.type === 'income';
 

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { CheckCircle, AlertTriangle, AlertOctagon } from "lucide-react";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "../../data/db";
+
 
 interface UseDecideInputProps {
   balance: number;
@@ -15,6 +18,10 @@ export function useDecideInput({
   t,
 }: UseDecideInputProps) {
   const [amount, setAmount] = useState("");
+
+  const capSetting = useLiveQuery(() => db.table("settings").get("monthly_cap"));
+  const monthlyCap = capSetting ? parseFloat(capSetting.value) : 0;
+
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, "");
@@ -35,26 +42,51 @@ export function useDecideInput({
   const checkSafety = () => {
     if (!amount) return null;
     const num = parseFloat(amount.replace(/\D/g, ""));
-    const newBal = balance - num / rate;
- // Safety check using local amount converted back to baseline
-    if (newBal < 0)
+    const baselineSpent = num / rate;
+    const newBal = balance - baselineSpent;
+
+    const currentMonth = new Date().getMonth();
+    const currentMonthSpent = transactions
+      .filter((t) => t.type === "expense" && new Date(t.date).getMonth() === currentMonth)
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const totalProjectedSpent = currentMonthSpent + baselineSpent;
+    const today = new Date();
+    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const daysLeft = daysInMonth - today.getDate() + 1;
+
+    const dailyBudgetBefore = balance > 0 ? balance / daysLeft : 0;
+    const dailyBudgetAfter = newBal > 0 ? newBal / daysLeft : 0;
+
+    // 🔴 Stage 1: NO (Exceeds Balance OR Exceeds Monthly Cap)
+    if (newBal < 0 || (monthlyCap > 0 && totalProjectedSpent > monthlyCap)) {
       return {
         state: "bad",
         icon: AlertOctagon,
-        text: t?.decide_bad || "The honey pot says hold off on this one.",
+        text: "NO, the honey pot says hold off. Exceeds available limits!",
       };
-    if (runway < 3)
+    }
+
+    // 🟡 Stage 2: MAYBE (Exceeds 80% of Cap OR cuts daily headroom significantly)
+    const cutsDailyByHalf = dailyBudgetAfter < dailyBudgetBefore * 0.7; // 30% reduction on single item
+    const nearingCap = monthlyCap > 0 && totalProjectedSpent > monthlyCap * 0.8;
+
+    if (nearingCap || cutsDailyByHalf || runway < 3) {
       return {
         state: "warn",
         icon: AlertTriangle,
-        text: t?.decide_warn || "Provisions are thinning, tread carefully.",
+        text: "MAYBE, cutting it close on headroom. Tread carefully.",
       };
+    }
+
+    // 🟢 Stage 3: YES
     return {
       state: "safe",
       icon: CheckCircle,
-      text: t?.decide_safe || "You may proceed with this expense.",
+      text: "YES! We are well within standard calculations to proceed.",
     };
   };
+
 
   const result = checkSafety();
 

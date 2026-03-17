@@ -36,7 +36,16 @@ export function useOnboarding() {
       setError(lang === "id" ? "Nama tidak boleh kosong" : "Name is required");
       return;
     }
+    if (!amount.trim()) {
+      setError(lang === "id" ? "Saldo Awal harus diisi" : "Starting Balance is required");
+      return;
+    }
+    if (passcode.length !== 4) {
+      setError(lang === "id" ? "Passcode 4 digit diperlukan" : "4-digit Passcode is required");
+      return;
+    }
     setError("");
+
 
 
     await db.table("settings").put({ key: "language", value: lang });
@@ -46,9 +55,10 @@ export function useOnboarding() {
       await db.table("settings").put({ key: "payday", value: parseInt(payday) });
     }
 
-    if (isPinEnabled && passcode.length === 4) {
+    if (passcode.length === 4) {
       await db.table("settings").put({ key: "passcode", value: passcode });
     }
+
 
 
 
@@ -64,7 +74,8 @@ export function useOnboarding() {
         title: lang === "id" ? "Saldo Awal" : "Starting Balance",
         amount: baselineAmount,
         category: "Income",
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString(),
+
         type: "income",
         storyNote: "Local account opened.",
       });

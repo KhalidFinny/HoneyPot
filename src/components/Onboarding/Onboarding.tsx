@@ -63,7 +63,8 @@ export default function Onboarding() {
 
   if (step === "cover") {
     return (
-      <div className="fixed inset-0 bg-bg2 flex flex-col items-center justify-start overflow-y-auto p-6 z-50 animate-fade-in relative">
+      <div className="fixed inset-0 bg-bg flex flex-col items-center justify-start overflow-y-auto p-6 z-50 animate-fade-in">
+
         <button 
           type="button"
           onClick={toggleDark} 
@@ -72,6 +73,7 @@ export default function Onboarding() {
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
         <div className="flex flex-col items-center text-center max-w-xs my-auto">
+
 
 
           <img
@@ -97,7 +99,8 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="fixed inset-0 bg-bg2 flex justify-center items-start overflow-y-auto p-4 z-50 animate-fade-in">
+    <div className="fixed inset-0 bg-bg flex justify-center items-start overflow-y-auto p-4 z-50 animate-fade-in">
+
 
       <button 
         type="button"
@@ -238,33 +241,17 @@ export default function Onboarding() {
 
           {/* 🔒 Passcode Section */}
           <div className="border-t border-border2/30 pt-4 w-full">
-            <div className="flex justify-between items-center mb-1.5">
-              <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block">Passcode Lock</label>
-              <button 
-                type="button"
-                onClick={() => setIsPinEnabled(!isPinEnabled)}
-                className={`text-xs font-semibold px-2 py-1 rounded-lg ${isPinEnabled ? 'bg-grl text-grd border border-gr' : 'bg-bg2 text-ink3 border border-border2'}`}
-              >
-                {isPinEnabled ? 'Enabled' : 'Disabled'}
-              </button>
-            </div>
-            {isPinEnabled && (
-              <motion.div 
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-2"
-              >
-                <input 
-                  type="password"
-                  maxLength={4}
-                  placeholder="0000"
-                  value={passcode}
-                  onChange={(e) => setPasscode(e.target.value.replace(/\D/g, ''))}
-                  className="w-full bg-bg2/50 border border-border2 rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
-                />
-              </motion.div>
-            )}
+            <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block mb-1.5">Set 4-Digit Passcode (Mandatory)</label>
+            <input 
+              type="password"
+              maxLength={4}
+              placeholder="0000"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value.replace(/\D/g, ''))}
+              className="w-full bg-bg2/50 border border-border2 rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
+            />
           </div>
+
 
           {error && <p className="text-rdd text-xs mt-2 text-center font-semibold animate-shake">{error}</p>}
 
