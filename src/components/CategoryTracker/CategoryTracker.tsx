@@ -68,7 +68,7 @@ export default function CategoryTracker({ transactions = [], curr, t }: Category
                   </div>
                   <span className="font-bold text-ink">{cat.label}</span>
                 </div>
-                <span className="font-extrabold text-ink">
+                <span className="font-extrabold text-ink truncate ml-2">
                   {symbol}{(spent * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 0, maximumFractionDigits: curr?.decimals ?? 0 })}
                 </span>
 

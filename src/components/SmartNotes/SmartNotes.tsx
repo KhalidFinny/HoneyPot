@@ -3,17 +3,37 @@ import { AlertTriangle, AlertOctagon, Sparkles } from 'lucide-react'
 
 import { SmartNotesProps } from "../../types"
 
+const parseSafeDate = (dStr: string) => {
+  const date = new Date(dStr);
+  if (!isNaN(date.getTime())) return date;
+  const parts = dStr.split("/");
+  if (parts.length === 3) {
+    const [m, d, y] = parts.map(Number);
+    if (m <= 12 && d <= 31) return new Date(y, m - 1, d);
+  }
+  return date;
+};
+
 export default function SmartNotes({ transactions = [], totalIncome = 0, totalExpense = 0, t }: SmartNotesProps) {
   
   const generateNotes = () => {
     const notes = [];
-    const expenses = transactions.filter(t => t.type === 'expense');
+    
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const expenses = transactions.filter(t => {
+      if (t.type !== 'expense') return false;
+      const d = parseSafeDate(t.date);
+      return !isNaN(d.getTime()) && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
 
     if (totalExpense > totalIncome && totalIncome > 0) {
       notes.push({ state: 'bad', icon: AlertOctagon, text: t?.bad_notes_overspent || "We've spent a little more than we gathered, let's keep an eye out together." });
     }
 
     const adventures = expenses.filter(e => e.category === 'Transport' || e.category === 'Shopping').reduce((sum, e) => sum + e.amount, 0);
+
 
     if (adventures > (totalExpense * 0.20) && totalExpense > 0) {
       notes.push({ state: 'warn', icon: AlertTriangle, text: t?.warn_notes_adventures || "Memories are taking up a bit of our pot — just making sure you are mindful." });

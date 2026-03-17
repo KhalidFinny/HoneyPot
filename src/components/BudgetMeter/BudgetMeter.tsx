@@ -50,7 +50,7 @@ export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterPro
           type="number"
           value={budget || ''}
           onChange={(e) => handleSetBudget(parseFloat(e.target.value) || 0)}
-          className="flex-1 bg-transparent py-1 focus:outline-none font-sans font-extrabold text-2xl text-ink [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="flex-1 bg-transparent py-1 focus:outline-none font-sans font-extrabold text-2xl text-ink [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none min-w-0 truncate"
         />
       </div>
 
@@ -58,8 +58,8 @@ export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterPro
         <div className={`h-full ${getFillColor()} transition-all duration-300`} style={{ width: `${Math.min(pct, 100)}%` }} />
       </div>
 
-      <div className="flex justify-between items-center w-full mt-2.5">
-        <span className="text-ink font-sans font-extrabold text-xs">{t?.spent || 'Spent'}: {symbol}{Math.round(currentExpenses * rate).toLocaleString()}</span>
+      <div className="flex justify-between items-center w-full mt-2.5 overflow-hidden">
+        <span className="text-ink font-sans font-extrabold text-xs truncate mr-2">{t?.spent || 'Spent'}: {symbol}{Math.round(currentExpenses * rate).toLocaleString()}</span>
         <span className="text-ink3 text-xs font-medium text-right max-w-[60%]">{getHint()}</span>
       </div>
     </div>

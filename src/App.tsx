@@ -102,7 +102,21 @@ function App() {
     }
   };
 
-  const totalIncome = useMemo(
+  const parseSafeDate = (dStr: string) => {
+    const date = new Date(dStr);
+    if (!isNaN(date.getTime())) return date;
+    const parts = dStr.split("/");
+    if (parts.length === 3) {
+      const [m, d, y] = parts.map(Number);
+      if (m <= 12 && d <= 31) return new Date(y, m - 1, d);
+    }
+    return date;
+  };
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const totalIncomeAll = useMemo(
     () =>
       transactions
         .filter((e: any) => e.type === "income")
@@ -110,7 +124,7 @@ function App() {
     [transactions],
   );
 
-  const totalExpense = useMemo(
+  const totalExpenseAll = useMemo(
     () =>
       transactions
         .filter((e: any) => e.type === "expense")
@@ -118,7 +132,32 @@ function App() {
     [transactions],
   );
 
-  const balance = totalIncome - totalExpense;
+  const totalIncome = useMemo(
+    () =>
+      transactions
+        .filter((e: any) => {
+          if (e.type !== "income") return false;
+          const d = parseSafeDate(e.date);
+          return !isNaN(d.getTime()) && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        })
+        .reduce((sum: number, e: any) => sum + e.amount, 0),
+    [transactions],
+  );
+
+  const totalExpense = useMemo(
+    () =>
+      transactions
+        .filter((e: any) => {
+          if (e.type !== "expense") return false;
+          const d = parseSafeDate(e.date);
+          return !isNaN(d.getTime()) && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        })
+        .reduce((sum: number, e: any) => sum + e.amount, 0),
+    [transactions],
+  );
+
+  const balance = totalIncomeAll - totalExpenseAll;
+
   const advice = generateSoftAdvice(transactions, curr.symbol);
 
 

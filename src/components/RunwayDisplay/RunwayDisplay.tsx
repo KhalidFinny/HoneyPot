@@ -9,7 +9,7 @@ export default function RunwayDisplay({ balance, t, payday, curr }: RunwayDispla
     <div className="w-full max-w-sm flex items-center gap-4 mt-4 bg-bg2 border border-border2 p-4 rounded-[24px] shadow-[0_2px_12px_rgba(220,205,185,0.15)] overflow-hidden">
       {/* 🔴 Left side: Big Days */}
       <div className="flex flex-col items-center justify-center p-2 bg-wh rounded-2xl border border-border2 aspect-square min-w-[72px] shadow-sm">
-        <span className="font-sans font-black text-[32px] tracking-tight text-ink leading-none">
+        <span className="font-sans font-black text-[32px] tracking-tight text-ink leading-none truncate max-w-full text-center">
           {daysLeft}
         </span>
         <span className="text-ink3 text-[10px] font-bold uppercase tracking-wider mt-0.5">
@@ -22,7 +22,7 @@ export default function RunwayDisplay({ balance, t, payday, curr }: RunwayDispla
         <p className="text-ink font-sans font-bold text-xs truncate">
           {payday ? (t?.days_to_payday || 'Days to Payday') : (t?.days_left_title || 'Days Left in Month')}
         </p>
-        <p className="text-ink text-xs font-semibold mt-0.5">
+        <p className="text-ink text-xs font-semibold mt-0.5 truncate w-full">
           {t?.daily_allowance || 'For today'}: <span className="text-pkd">{curr?.symbol || 'Rp'} {(dailyAllowance * (curr?.rate || 1)).toLocaleString(undefined, { maximumFractionDigits: curr?.decimals ?? 0 })}</span>
         </p>
         <h4 className="font-sans font-black text-ink text-sm mt-1 truncate">{title}</h4>

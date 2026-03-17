@@ -4,6 +4,17 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../../data/db";
 
 
+const parseSafeDate = (dStr: string) => {
+  const date = new Date(dStr);
+  if (!isNaN(date.getTime())) return date;
+  const parts = dStr.split("/");
+  if (parts.length === 3) {
+    const [m, d, y] = parts.map(Number);
+    if (m <= 12 && d <= 31) return new Date(y, m - 1, d);
+  }
+  return date;
+};
+
 interface UseDecideInputProps {
   balance: number;
   transactions?: any[];
@@ -12,6 +23,8 @@ interface UseDecideInputProps {
 }
 
 export function useDecideInput({
+
+
   balance,
   transactions = [],
   curr,
@@ -47,8 +60,9 @@ export function useDecideInput({
 
     const currentMonth = new Date().getMonth();
     const currentMonthSpent = transactions
-      .filter((t) => t.type === "expense" && new Date(t.date).getMonth() === currentMonth)
-      .reduce((sum, t) => sum + t.amount, 0);
+      .filter((t) => t.type === "expense" && parseSafeDate(t.date).getMonth() === currentMonth)
+      .reduce((sum: number, t: any) => sum + t.amount, 0);
+
 
     const totalProjectedSpent = currentMonthSpent + baselineSpent;
     const today = new Date();
