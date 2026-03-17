@@ -38,25 +38,38 @@ export interface RunwayDisplayProps {
   balance: number;
   transactions?: Transaction[];
   t?: any;
+  payday?: number;
+  curr?: Currency;
 }
+
+
+
 
 export interface HistoryListProps {
   expenses?: Transaction[];
   curr?: Currency;
   t?: any;
   onOpenAll?: () => void;
+  onEdit?: (item: Transaction) => void;
 }
+
+
 
 export interface HistoryManagerProps {
   expenses: Transaction[];
-  curr: Currency;
+  curr?: Currency;
   t: any;
 }
+
+
 
 export interface InputFormProps {
   onComplete?: () => void;
   t?: any;
+  editingItem?: Transaction;
+  curr?: Currency;
 }
+
 
 export interface BalanceBannerProps {
   balance: number;

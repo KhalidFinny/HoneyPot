@@ -50,11 +50,19 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+
 
   const userSetting = settingsList?.find((s: any) => s.key === "username");
   const languageSetting = settingsList?.find((s: any) => s.key === "language");
   const currencySetting = settingsList?.find((s: any) => s.key === "currency");
   const passcodeSetting = settingsList?.find((s: any) => s.key === "passcode");
+  const paydaySetting = settingsList?.find((s: any) => s.key === "payday");
+  const themeSetting = settingsList?.find((s: any) => s.key === "theme");
+
+
+
+
 
   const lang = (languageSetting?.value as "en" | "id") || "en";
   const currencyKey =
@@ -65,9 +73,20 @@ function App() {
     ...((currencies[currencyKey] || currencies.USD)),
     rate: liveRate
   };
+  const isDarkMode = themeSetting?.value === "dark";
+
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     const t = setTimeout(() => {
+
       if (settingsList === undefined) setTimedOut(true);
     }, 2500);
     return () => clearTimeout(t);
@@ -100,7 +119,8 @@ function App() {
   );
 
   const balance = totalIncome - totalExpense;
-  const advice = generateSoftAdvice(transactions);
+  const advice = generateSoftAdvice(transactions, curr.symbol);
+
 
   const currentHour = new Date().getHours();
   let greetingKey = "greeting_morning";
@@ -180,8 +200,11 @@ function App() {
               <img
                 src="/honeypot/logo3.svg"
                 alt="HoneyPot"
-                className="w-40 h-40 object-contain"
+                className="w-36 h-36 object-contain"
               />
+              <span className="text-ink3 text-xs font-semibold font-sans">
+                {new Date().toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
               <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DCD2C3] text-ink hover:bg-[#EDDAB4]/20 transition shadow-sm"
@@ -189,6 +212,7 @@ function App() {
                 <Settings className="w-5 h-5" />
               </button>
             </div>
+
 
             <header className="mb-6 text-left animate-fade-in w-full">
               <p className="text-ink3 text-[10px] font-semibold tracking-[3px] uppercase mb-1">
@@ -207,9 +231,19 @@ function App() {
               totalExpense={totalExpense}
               curr={curr}
               t={t}
+              onEditStartingBalance={() => {
+                const startItem = transactions.find(
+                  (ex: any) => ex.title === "Starting Balance" || ex.title === "Saldo Awal"
+                );
+                if (startItem) {
+                  setEditingItem(startItem);
+                  setIsModalOpen(true);
+                }
+              }}
             />
 
             {/* 02. Soft Guide Alert */}
+
             {totalExpense > totalIncome && totalIncome > 0 && (
               <AdvicePanel advice={advice} />
             )}
@@ -221,14 +255,24 @@ function App() {
               t={t}
               onOpenAll={() => setIsHistoryAllOpen(true)}
               isLoading={isLoadingData}
+              onEdit={(item: any) => {
+                setEditingItem(item);
+                setIsModalOpen(true);
+              }}
             />
+
 
             {/* 04. Runway */}
             <RunwayDisplay
               balance={balance}
               transactions={transactions}
               t={t}
+              payday={paydaySetting?.value}
+              curr={curr}
             />
+
+
+
 
             {/* 05. Decide Checker */}
             <DecideInput
@@ -272,11 +316,24 @@ function App() {
           {/* 📑 Modal Sheet */}
           <BottomModal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title="New Tale"
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingItem(null);
+            }}
+            title={editingItem ? "Edit Tale" : "New Tale"}
           >
-            <InputForm onComplete={() => setIsModalOpen(false)} t={t} />
+            <InputForm 
+              onComplete={() => {
+                setIsModalOpen(false);
+                setEditingItem(null);
+              }} 
+              t={t} 
+              editingItem={editingItem}
+              curr={curr}
+            />
+
           </BottomModal>
+
 
           {/* 📜 Full History Modal */}
           <BottomModal

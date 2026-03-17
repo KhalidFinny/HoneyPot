@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react'
+import { Trash2, Edit2 } from 'lucide-react'
 import { db } from '../../data/db'
 import { HistoryListProps } from '../../types'
 import Skeleton from '../UI/Skeleton'
@@ -7,13 +7,17 @@ interface ExtendedHistoryListProps extends HistoryListProps {
   isLoading?: boolean;
 }
 
-export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoading }: ExtendedHistoryListProps) {
+export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoading, onEdit }: ExtendedHistoryListProps) {
+
+
 
   const handleDelete = async (id: any) => {
     await db.table('expenses').delete(id)
   }
 
   const symbol = curr?.symbol || '$';
+  const rate = curr?.rate || 1;
+
 
   if (isLoading) {
     return (
@@ -63,13 +67,22 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
               </div>
               <div className="flex items-center gap-2">
                 <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
-                  {isIncome ? '+' : '-'}{symbol}{exp.amount.toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
+                  {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                 </p>
+
                 
                 <button 
-                  onClick={() => handleDelete(exp.id)}
-                  className="p-1.5 rounded-xl bg-rd/10 text-rd opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rd hover:text-white aspect-square flex items-center"
+                  onClick={() => onEdit && onEdit(exp)}
+                  className="p-1.5 rounded-xl bg-ink/10 text-ink transition-opacity hover:bg-ink hover:text-white aspect-square flex items-center"
                 >
+
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button 
+                  onClick={() => handleDelete(exp.id)}
+                  className="p-1.5 rounded-xl bg-rd/10 text-rd transition-opacity hover:bg-rd hover:text-white aspect-square flex items-center"
+                >
+
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>

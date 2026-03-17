@@ -2,8 +2,10 @@ import { useInputForm } from './InputForm.hooks'
 import { Check, TrendingUp, TrendingDown, ChevronDown } from 'lucide-react'
 import { InputFormProps } from "../../types"
 import { motion } from 'framer-motion'
+import CustomSelect from '../UI/CustomSelect'
 
-export default function InputForm({ onComplete, t }: InputFormProps) {
+
+export default function InputForm({ onComplete, t, editingItem, curr }: InputFormProps) {
 
 
   const {
@@ -17,7 +19,9 @@ export default function InputForm({ onComplete, t }: InputFormProps) {
     setCategory,
     handleAmountChange,
     handleSubmit,
-  } = useInputForm({ onComplete })
+  } = useInputForm({ onComplete, editingItem, curr })
+
+
 
 
   return (
@@ -59,8 +63,8 @@ export default function InputForm({ onComplete, t }: InputFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full bg-transparent border-b border-rule focus:outline-none focus:border-ink py-1 text-base font-sans font-medium text-ink"
-            autoFocus
           />
+
         </div>
 
         <div>
@@ -77,20 +81,18 @@ export default function InputForm({ onComplete, t }: InputFormProps) {
         {type === 'expense' && (
           <div>
             <label className="text-ink3 text-[9px] font-semibold tracking-[2px] uppercase mb-1 block">{t?.category || "Category"}</label>
-            <div className="relative">
-              <select 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-xl px-3 py-2 text-sm text-ink focus:outline-none focus:border-ink appearance-none cursor-pointer [&>option]:bg-white"
-              >
-                <option value="Food">{t?.food || 'Food'}</option>
-                <option value="Transport">{t?.transport || 'Transport'}</option>
-                <option value="Housing">{t?.housing || 'Housing'}</option>
-                <option value="Shopping">{t?.shopping || 'Shopping'}</option>
-                <option value="Bills">{t?.bills || 'Bills'}</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink3 pointer-events-none" />
-            </div>
+            <CustomSelect 
+              value={category}
+              onChange={setCategory}
+              options={[
+                { value: "Food", label: t?.food || 'Food' },
+                { value: "Transport", label: t?.transport || 'Transport' },
+                { value: "Housing", label: t?.housing || 'Housing' },
+                { value: "Shopping", label: t?.shopping || 'Shopping' },
+                { value: "Bills", label: t?.bills || 'Bills' }
+              ]}
+            />
+
           </div>
         )}
 

@@ -11,6 +11,8 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   const symbol = curr?.symbol || 'Rp';
+  const rate = curr?.rate || 1;
+
 
   const handleDelete = async (id: any) => {
     await db.table('expenses').delete(id);
@@ -69,8 +71,9 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
                 </div>
               ) : (
                 <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'}`}>
-                  {isIncome ? '+' : '-'}{symbol}{exp.amount.toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
+                  {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                 </p>
+
               )}
 
               <div className="flex items-center gap-1">
@@ -85,10 +88,12 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
                   </>
                 ) : (
                   <>
-                    <button onClick={() => handleStartEdit(exp)} className="p-1.5 rounded-xl bg-rule/10 text-ink2 opacity-0 group-hover:opacity-100 hover:bg-ink hover:text-white transition">
+                    <button onClick={() => handleStartEdit(exp)} className="p-1.5 rounded-xl bg-rule/10 text-ink2 hover:bg-ink hover:text-white transition">
+
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => handleDelete(exp.id)} className="p-1.5 rounded-xl bg-rd/10 text-rd opacity-0 group-hover:opacity-100 hover:bg-rd hover:text-white transition">
+                    <button onClick={() => handleDelete(exp.id)} className="p-1.5 rounded-xl bg-rd/10 text-rd hover:bg-rd hover:text-white transition">
+
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </>

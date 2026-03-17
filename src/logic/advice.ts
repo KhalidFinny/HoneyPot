@@ -1,4 +1,5 @@
-export function generateSoftAdvice(transactions: any[] = []) {
+export function generateSoftAdvice(transactions: any[] = [], symbol: string = "$") {
+
   const expenses = transactions.filter(t => t.type === 'expense');
   const income = transactions.filter(t => t.type === 'income');
   
@@ -42,8 +43,9 @@ export function generateSoftAdvice(transactions: any[] = []) {
 
   // Check 3: Good savings
   if (totalIncome > totalExpense && totalExpense > 0) {
-    return `Look at us, we saved $${(totalIncome - totalExpense).toFixed(2)} so far. That is honestly amazing and I'm proud of how you're managing this.`;
+    return `Look at us, we saved ${symbol}${(totalIncome - totalExpense).toFixed(0)} so far. That is honestly amazing and I'm proud of how you're managing this.`;
   }
+
 
   return "You're keeping everything tracking perfectly today. It's nice seeing how comfortable we are with where things are at.";
 }

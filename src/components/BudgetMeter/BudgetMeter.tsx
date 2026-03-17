@@ -5,19 +5,26 @@ import { useState, useEffect } from 'react'
 import { BudgetMeterProps } from '../../types'
 
 export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterProps) {
+  const symbol = curr?.symbol || '$';
+  const rate = curr?.rate || 1;
+
   const [budget, setBudget] = useState(0) 
   const budgetSetting = useLiveQuery(() => db.table('settings').get('budget_limit'))
 
   useEffect(() => {
-    if (budgetSetting?.value) setBudget(parseFloat(budgetSetting.value))
-  }, [budgetSetting])
+    if (budgetSetting?.value) setBudget(parseFloat(budgetSetting.value) * rate)
+  }, [budgetSetting, rate])
+
 
   const handleSetBudget = async (val: number) => {
     setBudget(val)
-    await db.table('settings').put({ key: 'budget_limit', value: val.toString() })
+    const normalizedBudget = val / rate;
+    await db.table('settings').put({ key: 'budget_limit', value: normalizedBudget.toString() })
   }
 
-  const pct = budget > 0 ? (currentExpenses / budget) * 100 : 0;
+
+  const pct = budget > 0 ? ((currentExpenses * rate) / budget) * 100 : 0;
+
 
   const getFillColor = () => {
     if (pct > 90) return 'bg-[#FF9EBB]'; // Slightly darker pastel for danger
@@ -32,12 +39,11 @@ export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterPro
     return t?.safe_budget || "Everything is perfectly safe and sound.";
   }
 
-  const symbol = curr?.symbol || '$';
-  const rate = curr?.rate || 1;
-
   return (
     <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-[#F5EFE6] border border-[#DCD2C3] p-4 rounded-[24px] shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
       <p className="text-ink font-sans font-bold text-sm mb-3">{t?.set_limit || 'Monthly Budget Limit…'}</p>
+
+
       <div className="flex items-baseline w-full border-b border-rule/50 focus-within:border-ink transition mb-4">
         <span className="text-ink font-sans font-black text-lg mr-1">{symbol}</span>
         <input 

@@ -2,6 +2,8 @@ import { useOnboarding } from "./Onboarding.hooks";
 import { translations } from "../../logic/settings";
 import { ChevronDown, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import CustomSelect from "../UI/CustomSelect";
+
 
 export default function Onboarding() {
 
@@ -15,11 +17,23 @@ export default function Onboarding() {
     setLang,
     curr,
     setCurr,
+    payday,
+    setPayday,
     handleAmountChange,
     handleSubmit,
   } = useOnboarding();
 
+
+
   const t = translations[lang] || translations.en;
+
+  const calendarToday = new Date();
+  const calendarYear = calendarToday.getFullYear();
+  const calendarMonth = calendarToday.getMonth();
+  const calendarMonthName = calendarToday.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' });
+  const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const weekdays = lang === 'id' ? ['M','S','S','R','K','J','S'] : ['S','M','T','W','T','F','S'];
 
 
   if (step === "cover") {
@@ -68,49 +82,40 @@ export default function Onboarding() {
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           <div className="flex gap-2 w-full">
             <div className="flex-1">
-              <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
-                Language
-              </label>
-              <div className="relative">
-                <select
-                  value={lang}
-                  onChange={(e) => setLang(e.target.value as "en" | "id")}
-                  className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-lg px-2.5 py-1.5 text-xs text-ink focus:outline-none focus:border-ink appearance-none cursor-pointer [&>option]:bg-white"
-                >
-                  <option value="en">English</option>
-                  <option value="id">Indonesian</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink3 pointer-events-none" />
-              </div>
+              <CustomSelect 
+                label="Language"
+                value={lang}
+                onChange={(val) => setLang(val as "en" | "id")}
+                options={[
+                  { value: "en", label: "English" },
+                  { value: "id", label: "Indonesian" }
+                ]}
+              />
             </div>
-            <div className="flex-1">
-              <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
-                Currency
-              </label>
-              <div className="relative">
-                <select
-                  value={curr}
-                  onChange={(e) => setCurr(e.target.value)}
-                  className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-lg px-2.5 py-1.5 text-xs text-ink focus:outline-none focus:border-ink appearance-none cursor-pointer [&>option]:bg-white"
-                >
-                  <option value="USD">USD ($)</option>
-                  <option value="IDR">IDR (Rp)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="GBP">GBP (£)</option>
-                  <option value="PHP">PHP (₱)</option>
-                  <option value="CNY">CNY (¥)</option>
-                  <option value="JPY">JPY (¥)</option>
-                  <option value="CAD">CAD (C$)</option>
-                  <option value="AUD">AUD (A$)</option>
-                  <option value="SGD">SGD (S$)</option>
-                  <option value="INR">INR (₹)</option>
-                  <option value="KRW">KRW (₩)</option>
-                  <option value="MYR">MYR (RM)</option>
 
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink3 pointer-events-none" />
-              </div>
+            <div className="flex-1">
+              <CustomSelect 
+                label="Currency"
+                value={curr}
+                onChange={setCurr}
+                options={[
+                  { value: "USD", label: "USD ($)" },
+                  { value: "IDR", label: "IDR (Rp)" },
+                  { value: "EUR", label: "EUR (€)" },
+                  { value: "GBP", label: "GBP (£)" },
+                  { value: "PHP", label: "PHP (₱)" },
+                  { value: "CNY", label: "CNY (¥)" },
+                  { value: "JPY", label: "JPY (¥)" },
+                  { value: "CAD", label: "CAD (C$)" },
+                  { value: "AUD", label: "AUD (A$)" },
+                  { value: "SGD", label: "SGD (S$)" },
+                  { value: "INR", label: "INR (₹)" },
+                  { value: "KRW", label: "KRW (₩)" },
+                  { value: "MYR", label: "MYR (RM)" }
+                ]}
+              />
             </div>
+
           </div>
 
           <div className="mt-1">
@@ -126,10 +131,10 @@ export default function Onboarding() {
 
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-transparent border-b border-[#DCD2C3] focus:outline-none focus:border-ink py-1 text-base font-sans font-medium text-ink"
-              autoFocus
               required
             />
           </div>
+
 
           <div>
             <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
@@ -143,6 +148,48 @@ export default function Onboarding() {
               className="w-full bg-transparent border-b border-[#DCD2C3] focus:outline-none focus:border-ink py-1 text-xl font-sans font-extrabold text-ink"
             />
           </div>
+
+          <div className="mt-2">
+            <label className="text-ink3 text-[9px] font-semibold tracking-[1px] uppercase mb-1 block">
+              {lang === "id" ? "Tanggal Gajian (Opsional)" : "Payday (Optional)"}
+            </label>
+            <div className="bg-[#F2EBDA]/20 p-2.5 rounded-xl border border-[#DCD2C3] mt-1">
+              <p className="text-center text-[11px] font-bold text-ink2 mb-1.5">
+                {calendarMonthName}
+              </p>
+              <div className="grid grid-cols-7 gap-1.5 text-center">
+                {weekdays.map((w, i) => (
+                  <div key={i} className="text-[10px] font-bold text-ink3">
+                    {w}
+                  </div>
+                ))}
+                {Array.from({ length: firstDay }).map((_, i) => (
+                  <div key={`blank-${i}`} />
+                ))}
+                {Array.from({ length: daysInMonth }).map((_, i) => {
+                  const d = i + 1;
+                  return (
+                    <button 
+                      type="button"
+                      key={d}
+                      onClick={() => setPayday(payday === String(d) ? "" : String(d))}
+                      className={`w-full aspect-square flex items-center justify-center text-xs font-sans font-bold rounded-lg transition-all duration-200 ${
+                        payday === String(d) 
+                          ? 'bg-ink text-white shadow-sm scale-105' 
+                          : 'text-ink hover:bg-[#DCD2C3]/40'
+                      }`}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
+
+
+
 
           <motion.button
             whileHover={{ scale: 1.02 }}

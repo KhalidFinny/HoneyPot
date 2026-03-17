@@ -9,6 +9,8 @@ interface CategoryTrackerProps {
 
 export default function CategoryTracker({ transactions = [], curr, t }: CategoryTrackerProps) {
   const symbol = curr?.symbol || 'Rp';
+  const rate = curr?.rate || 1;
+
 
   // Group by category for CURRENT MONTH
   const currentMonth = new Date().getMonth();
@@ -54,8 +56,9 @@ export default function CategoryTracker({ transactions = [], curr, t }: Category
                   <span className="font-bold text-ink">{cat.label}</span>
                 </div>
                 <span className="font-extrabold text-ink">
-                  {symbol}{spent.toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 0, maximumFractionDigits: curr?.decimals ?? 0 })}
+                  {symbol}{(spent * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 0, maximumFractionDigits: curr?.decimals ?? 0 })}
                 </span>
+
               </div>
               <div className="w-full h-2 bg-rule/20 rounded-full overflow-hidden">
                 <div 

@@ -34,8 +34,9 @@ export function useDecideInput({
 
   const checkSafety = () => {
     if (!amount) return null;
-    const num = parseFloat(amount.replace(/,/g, ""));
-    const newBal = balance - num / rate; // Safety check using local amount converted back to baseline
+    const num = parseFloat(amount.replace(/\D/g, ""));
+    const newBal = balance - num / rate;
+ // Safety check using local amount converted back to baseline
     if (newBal < 0)
       return {
         state: "bad",

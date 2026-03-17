@@ -2,6 +2,8 @@ import { useSettingsModal } from './SettingsModal.hooks'
 import BottomModal from '../BottomModal/BottomModal'
 import { ChevronDown } from 'lucide-react'
 import { motion } from 'framer-motion'
+import CustomSelect from '../UI/CustomSelect'
+
 
 
 interface SettingsModalProps {
@@ -21,56 +23,116 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     setIsPinEnabled,
     handleSave,
     handleReset,
+    theme,
+    setTheme,
+    payday,
+    setPayday,
   } = useSettingsModal({ onClose })
+
+  const calendarToday = new Date();
+  const calendarYear = calendarToday.getFullYear();
+  const calendarMonth = calendarToday.getMonth();
+  const calendarMonthName = calendarToday.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' });
+  const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const weekdays = lang === 'id' ? ['M','S','S','R','K','J','S'] : ['S','M','T','W','T','F','S'];
 
   return (
 
     <BottomModal isOpen={isOpen} onClose={onClose} title="Settings & Kingdom Config">
       <div className="flex flex-col gap-5">
         <div>
-          <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider mb-1.5 block">Language</label>
-          <div className="relative">
-            <select 
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-xl px-3 py-2 text-sm text-ink focus:outline-none focus:border-ink appearance-none cursor-pointer [&>option]:bg-white"
+          <CustomSelect 
+            label="Language"
+            value={lang}
+            onChange={setLang}
+            options={[
+              { value: "en", label: "English (Enchanted)" },
+              { value: "id", label: "Indonesia (Bahasa)" }
+            ]}
+          />
+        </div>
+
+
+        <div>
+          <CustomSelect 
+            label="Currency"
+            value={curr}
+            onChange={setCurr}
+            options={[
+              { value: "USD", label: "USD ($)" },
+              { value: "IDR", label: "IDR (Rp)" },
+              { value: "EUR", label: "EUR (€)" },
+              { value: "GBP", label: "GBP (£)" },
+              { value: "PHP", label: "PHP (₱)" },
+              { value: "CNY", label: "CNY (¥)" },
+              { value: "JPY", label: "JPY (¥)" },
+              { value: "CAD", label: "CAD (C$)" },
+              { value: "AUD", label: "AUD (A$)" },
+              { value: "SGD", label: "SGD (S$)" },
+              { value: "INR", label: "INR (₹)" },
+              { value: "KRW", label: "KRW (₩)" },
+              { value: "MYR", label: "MYR (RM)" }
+            ]}
+          />
+        </div>
+        
+
+
+        <div>
+          <div className="flex justify-between items-center mb-1.5">
+            <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block">Dark Mode</label>
+            <button 
+              type="button"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`text-xs font-semibold px-2 py-1 rounded-lg ${theme === 'dark' ? 'bg-grl text-grd border border-gr' : 'bg-[#F5EFE6] text-ink3 border border-[#DCD2C3]'}`}
             >
-              <option value="en">English (Enchanted)</option>
-              <option value="id">Indonesia (Bahasa)</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink3 pointer-events-none" />
+              {theme === 'dark' ? 'Enabled' : 'Disabled'}
+            </button>
           </div>
         </div>
 
-        <div>
-          <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider mb-1.5 block">Currency</label>
-          <div className="relative">
-            <select 
-              value={curr}
-              onChange={(e) => setCurr(e.target.value)}
-              className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-xl px-3 py-2 text-sm text-ink focus:outline-none focus:border-ink appearance-none cursor-pointer [&>option]:bg-white"
-            >
-              <option value="USD">USD ($)</option>
-              <option value="IDR">IDR (Rp)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
-              <option value="PHP">PHP (₱)</option>
-              <option value="CNY">CNY (¥)</option>
-              <option value="JPY">JPY (¥)</option>
-              <option value="CAD">CAD (C$)</option>
-              <option value="AUD">AUD (A$)</option>
-              <option value="SGD">SGD (S$)</option>
-              <option value="INR">INR (₹)</option>
-              <option value="KRW">KRW (₩)</option>
-              <option value="MYR">MYR (RM)</option>
-
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink3 pointer-events-none" />
+        <div className="border-t border-[#ECD8F0] pt-4">
+          <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider mb-1.5 block">Payday (Recurring)</label>
+          <div className="bg-[#F2EBDA]/20 p-2.5 rounded-xl border border-[#DCD2C3] mt-1">
+            <p className="text-center text-[11px] font-bold text-ink2 mb-1.5">
+              {calendarMonthName}
+            </p>
+            <div className="grid grid-cols-7 gap-1.5 text-center">
+              {weekdays.map((w, i) => (
+                <div key={i} className="text-[10px] font-bold text-ink3">
+                  {w}
+                </div>
+              ))}
+              {Array.from({ length: firstDay }).map((_, i) => (
+                <div key={`blank-${i}`} />
+              ))}
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const d = i + 1;
+                return (
+                  <button 
+                    type="button"
+                    key={d}
+                    onClick={() => setPayday(payday === String(d) ? "" : String(d))}
+                    className={`w-full aspect-square flex items-center justify-center text-xs font-sans font-bold rounded-lg transition-all duration-200 ${
+                      payday === String(d) 
+                        ? 'bg-ink text-white shadow-sm scale-105' 
+                        : 'text-ink hover:bg-[#DCD2C3]/40'
+                    }`}
+                  >
+                    {d}
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
         </div>
 
         {/* 🔒 Passcode Section */}
         <div className="border-t border-[#ECD8F0] pt-4">
+
+
           <div className="flex justify-between items-center mb-1.5">
             <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block">Passcode Lock</label>
             <button 

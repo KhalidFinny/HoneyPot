@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { db } from "../../data/db";
 import { currencies } from "../../logic/settings";
+import { useRate } from "../../logic/sync";
+
 
 export function useOnboarding() {
   const [step, setStep] = useState<"cover" | "info">("cover");
@@ -8,9 +10,13 @@ export function useOnboarding() {
   const [amount, setAmount] = useState("");
   const [lang, setLang] = useState<"en" | "id">("en");
   const [curr, setCurr] = useState("USD");
+  const [payday, setPayday] = useState("");
+  const liveRate = useRate(curr);
+
 
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     const val = e.target.value.replace(/\D/g, "");
     if (!val) {
       setAmount("");
@@ -26,13 +32,18 @@ export function useOnboarding() {
     await db.table("settings").put({ key: "language", value: lang });
     await db.table("settings").put({ key: "currency", value: curr });
     await db.table("settings").put({ key: "username", value: name.trim() });
+    if (payday) {
+      await db.table("settings").put({ key: "payday", value: parseInt(payday) });
+    }
+
 
     if (amount) {
-      const num = parseFloat(amount.replace(/,/g, ""));
-      const activeCurr =
-        currencies[curr as keyof typeof currencies] || currencies.USD;
+      const num = parseFloat(amount.replace(/\D/g, ""));
+
       // Convert amount back to baseline USD equivalent before saving raw to DB
-      const baselineAmount = num / activeCurr.rate;
+      const baselineAmount = num / liveRate;
+
+
 
       await db.table("expenses").add({
         title: lang === "id" ? "Saldo Awal" : "Starting Balance",
@@ -56,7 +67,10 @@ export function useOnboarding() {
     setLang,
     curr,
     setCurr,
+    payday,
+    setPayday,
     handleAmountChange,
+
     handleSubmit,
   };
 }

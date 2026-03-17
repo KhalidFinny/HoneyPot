@@ -27,6 +27,28 @@
   --font-sans: "DM Sans", sans-serif;
 }
 
+.dark {
+  --color-bg: #1C1A17;
+  --color-wh: #26231F;
+  --color-rule: #3A2E39;
+  --color-ink: #F5F0E6;
+  --color-ink2: #D9CBB6;
+  --color-ink3: #B8A38E;
+  --color-pk: #4A2036;
+  --color-pkl: #2A121E;
+  --color-pkd: #FFD0E8;
+  --color-y: #665200;
+  --color-yl: #262000;
+  --color-yd: #FFE566;
+  --color-gr: #154005;
+  --color-grl: #0A2102;
+  --color-grd: #B8EAA0;
+  --color-rd: #551010;
+  --color-rdl: #300808;
+  --color-rdd: #FFAAAA;
+}
+
+
 @layer base {
   html, body {
     background-color: var(--color-bg);
