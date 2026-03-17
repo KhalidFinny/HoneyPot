@@ -1,4 +1,5 @@
-import { Trash2, Edit2 } from 'lucide-react'
+import { useState } from 'react';
+import { Trash2, Edit2, X } from 'lucide-react';
 import { db } from '../../data/db'
 import { HistoryListProps } from '../../types'
 import Skeleton from '../UI/Skeleton'
@@ -20,6 +21,7 @@ const parseSafeDate = (dStr: string) => {
 
 
 export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoading, onEdit }: ExtendedHistoryListProps) {
+  const [activeModal, setActiveModal] = useState<{ title: string; amount: number; type: string } | null>(null);
 
 
 
@@ -101,7 +103,7 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
                      </div>
                    </div>
                    <div className="flex items-center gap-2 justify-end min-w-0 flex-1">
-                     <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right max-w-[120px]`}>
+                     <p onClick={(e) => { e.stopPropagation(); setActiveModal({ title: exp.title, amount: exp.amount, type: exp.type }); }} className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right max-w-[120px] cursor-pointer`}>
                        {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                      </p>
 
@@ -126,6 +128,28 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
       >
         View All 
       </button>
+
+      {activeModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setActiveModal(null)}>
+          <div className="bg-bg w-full max-w-xs rounded-3xl p-5 border border-border2 flex flex-col items-center animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-10 rounded-xl bg-ink/5 flex items-center justify-center mb-3">
+              <span className={`text-lg font-bold ${activeModal.type === 'income' ? 'text-grd' : 'text-rd'}`}>
+                {activeModal.type === 'income' ? 'Income' : 'Expense'}
+              </span>
+            </div>
+            <h3 className="font-sans font-bold text-ink text-sm mb-1 text-center truncate w-full">{activeModal.title}</h3>
+            <p className="font-sans font-black text-ink text-2xl tracking-tight text-center">
+              {symbol}{(activeModal.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 0, maximumFractionDigits: curr?.decimals ?? 2 })}
+            </p>
+            <button 
+              onClick={() => setActiveModal(null)} 
+              className="mt-4 p-1.5 rounded-full bg-rule/10 text-ink2 hover:bg-ink hover:text-white transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
