@@ -146,7 +146,7 @@ function App() {
           </p>
           <button
             onClick={handleReset}
-            className="bg-pkd hover:bg-ink text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-xs"
+            className="bg-pkd hover:bg-ink text-bg font-semibold px-4 py-2 rounded-xl shadow-md transition text-xs"
           >
             Reset Database
           </button>
@@ -196,22 +196,31 @@ function App() {
 
           {/* 📱 Single Column Container */}
           <div className="relative z-10 w-full max-w-[420px] flex flex-col items-start px-4">
-            <div className="flex justify-between items-center w-full mb-8 mt-4 animate-fade-in">
-              <img
-                src="/honeypot/logo3.svg"
-                alt="HoneyPot"
-                className="w-36 h-36 object-contain"
-              />
-              <span className="text-ink3 text-xs font-semibold font-sans">
-                {new Date().toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </span>
-              <button
-                onClick={() => setIsSettingsOpen(true)}
-                className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DCD2C3] text-ink hover:bg-[#EDDAB4]/20 transition shadow-sm"
-              >
-                <Settings className="w-5 h-5" />
-              </button>
+            <div className="grid grid-cols-3 items-center w-full mb-8 mt-4 animate-fade-in">
+              <div className="flex justify-start">
+                <img
+                  src="/honeypot/logo2.svg"
+                  alt="HoneyPot"
+                  className="w-12 h-12 object-contain"
+                />
+              </div>
+              <div className="text-center">
+                <span className="text-ink text-sm font-bold font-sans whitespace-nowrap">
+                  {new Date().toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="p-2.5 rounded-xl bg-bg2 border border-border2 text-ink hover:bg-border2/20 transition shadow-sm"
+                >
+                  <Settings className="w-5 h-5" />
+                </button>
+              </div>
             </div>
+
+
 
 
             <header className="mb-6 text-left animate-fade-in w-full">
@@ -308,7 +317,7 @@ function App() {
           {/* ➕ Floating Action Button (FAB) */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="fixed bottom-7 left-1/2 -translate-x-[calc(-210px+24px)] w-14 h-14 bg-ink text-white rounded-full flex items-center justify-center shadow-xl hover:bg-ink2 transform hover:scale-105 active:scale-95 transition z-40 max-sm:right-6 max-sm:left-auto max-sm:translate-x-0"
+            className="fixed bottom-7 left-1/2 -translate-x-[calc(-210px+24px)] w-14 h-14 bg-ink text-bg rounded-full flex items-center justify-center shadow-xl hover:bg-ink2 transform hover:scale-105 active:scale-95 transition z-40 max-sm:right-6 max-sm:left-auto max-sm:translate-x-0"
           >
             <Plus className="w-6 h-6" />
           </button>

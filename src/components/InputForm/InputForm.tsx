@@ -34,7 +34,7 @@ export default function InputForm({ onComplete, t, editingItem, curr }: InputFor
           whileHover={{ scale: 1.02, translateY: -1 }}
           whileTap={{ scale: 0.98 }}
           className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg transition ${
-            type === 'expense' ? 'bg-white shadow-sm text-pkd font-bold' : 'text-ink3 hover:text-ink2'
+            type === 'expense' ? 'bg-bg shadow-sm text-pkd font-bold' : 'text-ink3 hover:text-ink2'
           }`}
         >
           <TrendingDown className="w-3.5 h-3.5" /> {t?.expense || 'Expense'}
@@ -45,8 +45,9 @@ export default function InputForm({ onComplete, t, editingItem, curr }: InputFor
           whileHover={{ scale: 1.02, translateY: -1 }}
           whileTap={{ scale: 0.98 }}
           className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg transition ${
-            type === 'income' ? 'bg-white shadow-sm text-grd font-bold' : 'text-ink3 hover:text-ink2'
+            type === 'income' ? 'bg-bg shadow-sm text-grd font-bold' : 'text-ink3 hover:text-ink2'
           }`}
+
         >
           <TrendingUp className="w-3.5 h-3.5" /> {t?.income || 'Income'}
         </motion.button>
@@ -100,7 +101,8 @@ export default function InputForm({ onComplete, t, editingItem, curr }: InputFor
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-4 bg-ink hover:bg-ink2 text-white font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-1 shadow-sm font-sans"
+          className="mt-4 bg-ink hover:bg-ink2 text-bg font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-1 shadow-sm font-sans"
+
         >
           <Check className="w-4 h-4" /> {type === "income" ? (t?.save_income || "Save Income") : (t?.save_expense || "Save Expense")}
         </motion.button>

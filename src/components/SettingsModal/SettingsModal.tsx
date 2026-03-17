@@ -3,6 +3,8 @@ import BottomModal from '../BottomModal/BottomModal'
 import { ChevronDown } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CustomSelect from '../UI/CustomSelect'
+import { db } from '../../data/db'
+
 
 
 
@@ -84,17 +86,22 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider block">Dark Mode</label>
             <button 
               type="button"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`text-xs font-semibold px-2 py-1 rounded-lg ${theme === 'dark' ? 'bg-grl text-grd border border-gr' : 'bg-[#F5EFE6] text-ink3 border border-[#DCD2C3]'}`}
+              onClick={async () => {
+                const nt = theme === 'dark' ? 'light' : 'dark';
+                setTheme(nt);
+                await db.table('settings').put({ key: 'theme', value: nt });
+              }}
+              className={`text-xs font-semibold px-2 py-1 rounded-lg ${theme === 'dark' ? 'bg-grl text-grd border border-gr' : 'bg-bg2 text-ink3 border border-border2'}`}
             >
               {theme === 'dark' ? 'Enabled' : 'Disabled'}
             </button>
           </div>
+
         </div>
 
-        <div className="border-t border-[#ECD8F0] pt-4">
+        <div className="border-t border-border2/30 pt-4">
           <label className="text-ink3 text-[10px] uppercase font-semibold tracking-wider mb-1.5 block">Payday (Recurring)</label>
-          <div className="bg-[#F2EBDA]/20 p-2.5 rounded-xl border border-[#DCD2C3] mt-1">
+          <div className="bg-bg2/50 p-2.5 rounded-xl border border-border2 mt-1">
             <p className="text-center text-[11px] font-bold text-ink2 mb-1.5">
               {calendarMonthName}
             </p>
@@ -116,8 +123,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     onClick={() => setPayday(payday === String(d) ? "" : String(d))}
                     className={`w-full aspect-square flex items-center justify-center text-xs font-sans font-bold rounded-lg transition-all duration-200 ${
                       payday === String(d) 
-                        ? 'bg-ink text-white shadow-sm scale-105' 
-                        : 'text-ink hover:bg-[#DCD2C3]/40'
+                        ? 'bg-ink text-bg shadow-sm scale-105' 
+                        : 'text-ink hover:bg-border2/20'
                     }`}
                   >
                     {d}
@@ -130,7 +137,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </div>
 
         {/* 🔒 Passcode Section */}
-        <div className="border-t border-[#ECD8F0] pt-4">
+        <div className="border-t border-border2/30 pt-4">
 
 
           <div className="flex justify-between items-center mb-1.5">
@@ -138,19 +145,19 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <button 
               type="button"
               onClick={() => setIsPinEnabled(!isPinEnabled)}
-              className={`text-xs font-semibold px-2 py-1 rounded-lg ${isPinEnabled ? 'bg-grl text-grd border border-gr' : 'bg-[#F5EFE6] text-ink3 border border-[#DCD2C3]'}`}
+              className={`text-xs font-semibold px-2 py-1 rounded-lg ${isPinEnabled ? 'bg-grl text-grd border border-gr' : 'bg-bg2 text-ink3 border border-border2'}`}
             >
               {isPinEnabled ? 'Enabled' : 'Disabled'}
             </button>
           </div>
           {isPinEnabled && (
             <input 
-              type="text" 
+              type="password" 
               maxLength={4}
               placeholder="Enter 4-digit PIN"
               value={passcode}
               onChange={(e) => setPasscode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
+              className="w-full bg-bg2/50 border border-border2 rounded-xl px-3 py-2 text-sm text-ink font-mono font-bold tracking-widest focus:outline-none focus:border-ink"
             />
           )}
         </div>
@@ -159,7 +166,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleSave}
-          className="mt-4 bg-ink hover:bg-ink2 text-white font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center font-sans shadow-sm"
+          className="mt-4 bg-ink hover:bg-ink2 text-bg font-semibold py-2.5 rounded-xl transition text-sm flex items-center justify-center font-sans shadow-sm"
+
         >
           Save Changes
         </motion.button>

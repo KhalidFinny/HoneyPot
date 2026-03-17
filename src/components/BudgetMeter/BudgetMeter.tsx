@@ -40,7 +40,7 @@ export default function BudgetMeter({ currentExpenses, curr, t }: BudgetMeterPro
   }
 
   return (
-    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-[#F5EFE6] border border-[#DCD2C3] p-4 rounded-[24px] shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
+    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-bg2 border border-border2 p-4 rounded-[24px] shadow-sm">
       <p className="text-ink font-sans font-bold text-sm mb-3">{t?.set_limit || 'Monthly Budget Limit…'}</p>
 
 

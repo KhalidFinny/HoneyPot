@@ -9,7 +9,7 @@ export default function DecideInput({ balance, transactions = [], curr, t }: Dec
 
   return (
 
-    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-[#F5EFE6] border border-[#DCD2C3] p-4 rounded-[24px] shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
+    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-bg2 border border-border2 p-4 rounded-[24px] shadow-sm">
       <p className="text-ink font-sans font-bold text-sm mb-3">{t?.ask_honey_pot || 'Decide spending…'}</p>
       <div className="flex items-center gap-3 w-full">
         <div className="relative flex-1 min-w-0 flex items-baseline border-b border-rule/50 focus-within:border-ink transition">
@@ -25,7 +25,7 @@ export default function DecideInput({ balance, transactions = [], curr, t }: Dec
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="p-3 rounded-2xl bg-ink text-white hover:bg-ink2 transition shadow-sm"
+          className="p-3 rounded-2xl bg-ink text-bg hover:bg-ink2 transition shadow-sm"
         >
           <Sparkles className="w-4 h-4" />
         </motion.button>

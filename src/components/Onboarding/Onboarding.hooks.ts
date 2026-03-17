@@ -11,7 +11,10 @@ export function useOnboarding() {
   const [lang, setLang] = useState<"en" | "id">("en");
   const [curr, setCurr] = useState("USD");
   const [payday, setPayday] = useState("");
+  const [isPinEnabled, setIsPinEnabled] = useState(false);
+  const [passcode, setPasscode] = useState("");
   const liveRate = useRate(curr);
+
 
 
 
@@ -35,6 +38,11 @@ export function useOnboarding() {
     if (payday) {
       await db.table("settings").put({ key: "payday", value: parseInt(payday) });
     }
+
+    if (isPinEnabled && passcode.length === 4) {
+      await db.table("settings").put({ key: "passcode", value: passcode });
+    }
+
 
 
     if (amount) {
@@ -69,8 +77,13 @@ export function useOnboarding() {
     setCurr,
     payday,
     setPayday,
+    isPinEnabled,
+    setIsPinEnabled,
+    passcode,
+    setPasscode,
     handleAmountChange,
 
     handleSubmit,
+
   };
 }

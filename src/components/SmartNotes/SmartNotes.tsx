@@ -35,7 +35,8 @@ export default function SmartNotes({ transactions = [], totalIncome = 0, totalEx
   }
 
   return (
-    <div className="w-full max-w-sm mt-4 bg-[#FCF5E3]/80 border border-[#EDDAB4] p-4 rounded-[24px] shadow-[0_4px_16px_rgba(245,215,165,0.12)] flex flex-col gap-2">
+    <div className="w-full max-w-sm mt-4 bg-yl/80 border border-y p-4 rounded-[24px] shadow-sm flex flex-col gap-2">
+
       <h3 className="text-ink font-sans font-bold text-sm mb-1">{t?.whispers || 'Alerts & Guide'}</h3>
       {notesList.map((note, idx) => (
         <div key={idx} className="flex gap-2 items-start py-1.5 border-b border-rule/20 last:border-0">

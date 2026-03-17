@@ -19,14 +19,15 @@ export default function PasscodeLock({ onUnlock, correctPin }: PasscodeLockProps
   return (
 
     <motion.div 
-      className="fixed inset-0 bg-[#FFFBF7] z-50 flex flex-col items-center justify-center p-6"
+      className="fixed inset-0 bg-bg z-50 flex flex-col items-center justify-center p-6"
+
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <div className="flex flex-col items-center text-center max-w-sm w-full">
         <motion.div 
-          className="w-16 h-16 rounded-3xl bg-pkl flex items-center justify-center mb-4 border border-[#ECD8F0]"
+          className="w-16 h-16 rounded-3xl bg-pkl flex items-center justify-center mb-4 border border-border2/30"
           animate={error ? { x: [-10, 10, -10, 10, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
@@ -41,7 +42,7 @@ export default function PasscodeLock({ onUnlock, correctPin }: PasscodeLockProps
           {[0, 1, 2, 3].map((index) => (
             <motion.div 
               key={index}
-              className={`w-3 h-3 rounded-full border border-[#DCD2C3] ${index < pin.length ? 'bg-ink' : 'bg-transparent'}`}
+              className={`w-3 h-3 rounded-full border border-border2 ${index < pin.length ? 'bg-ink' : 'bg-transparent'}`}
               animate={error && index < pin.length ? { backgroundColor: '#881818' } : {}}
               transition={{ duration: 0.2 }}
             />
@@ -54,7 +55,7 @@ export default function PasscodeLock({ onUnlock, correctPin }: PasscodeLockProps
             <button 
               key={num} 
               onClick={() => handleKeyPress(num)}
-              className="w-16 h-16 rounded-full bg-[#F5EFE6] hover:bg-[#EDDAB4]/30 active:scale-95 text-xl font-serif font-bold text-ink transition flex items-center justify-center shadow-sm"
+              className="w-16 h-16 rounded-full bg-bg2 hover:bg-border2/20 active:scale-95 text-xl font-serif font-bold text-ink transition flex items-center justify-center shadow-sm"
             >
               {num}
             </button>
@@ -62,21 +63,21 @@ export default function PasscodeLock({ onUnlock, correctPin }: PasscodeLockProps
           
           <button 
             onClick={triggerBiometrics}
-            className="w-16 h-16 rounded-full flex items-center justify-center text-ink3 hover:bg-[#F5EFE6] transition"
+            className="w-16 h-16 rounded-full flex items-center justify-center text-ink3 hover:bg-bg2 transition"
           >
             <Fingerprint className="w-6 h-6" />
           </button>
           
           <button 
             onClick={() => handleKeyPress('0')}
-            className="w-16 h-16 rounded-full bg-[#F5EFE6] hover:bg-[#EDDAB4]/30 active:scale-95 text-xl font-serif font-bold text-ink transition flex items-center justify-center shadow-sm"
+            className="w-16 h-16 rounded-full bg-bg2 hover:bg-border2/20 active:scale-95 text-xl font-serif font-bold text-ink transition flex items-center justify-center shadow-sm"
           >
             0
           </button>
 
           <button 
             onClick={handleDelete}
-            className="w-16 h-16 rounded-full flex items-center justify-center text-ink3 hover:bg-[#F5EFE6] transition"
+            className="w-16 h-16 rounded-full flex items-center justify-center text-ink3 hover:bg-bg2 transition"
           >
             <Delete className="w-6 h-6" />
           </button>

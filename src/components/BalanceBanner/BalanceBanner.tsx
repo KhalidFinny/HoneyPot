@@ -40,15 +40,16 @@ export default function BalanceBanner({ balance, totalIncome, totalExpense, curr
       
       {/* Split Row Dashboard Style */}
       <div className="flex w-full gap-3 mt-5">
-        <div className="flex-1 flex flex-col items-start bg-[#FFFCE6] border border-[#FADF9E] p-4 rounded-2xl shadow-sm">
-          <span className="text-amber-800 text-[10px] font-bold tracking-wider uppercase">{t?.gathered || 'INCOME'}</span>
-          <span className="font-sans font-black text-lg text-amber-900 mt-1">{symbol}{displayIncome.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
+        <div className="flex-1 flex flex-col items-start bg-yl border border-y p-4 rounded-2xl shadow-sm">
+          <span className="text-yd text-[10px] font-bold tracking-wider uppercase">{t?.gathered || 'INCOME'}</span>
+          <span className="font-sans font-black text-lg text-yd mt-1">{symbol}{displayIncome.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
         </div>
-        <div className="flex-1 flex flex-col items-start bg-[#FFEFEF] border border-[#FADBD9] p-4 rounded-2xl shadow-sm">
-          <span className="text-red-800 text-[10px] font-bold tracking-wider uppercase">{t?.scattered || 'EXPENSES'}</span>
-          <span className="font-sans font-black text-lg text-red-900 mt-1">{symbol}{displayExpense.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
+        <div className="flex-1 flex flex-col items-start bg-rdl border border-rd p-4 rounded-2xl shadow-sm">
+          <span className="text-rdd text-[10px] font-bold tracking-wider uppercase">{t?.scattered || 'EXPENSES'}</span>
+          <span className="font-sans font-black text-lg text-rdd mt-1">{symbol}{displayExpense.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
         </div>
       </div>
+
     </div>
   )
 }

@@ -25,7 +25,7 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
         <h3 className="text-sm font-sans font-bold text-ink mb-3 tracking-wide">{t?.tales || 'History'}</h3>
         <div className="flex flex-col gap-2.5">
           {[1, 2, 3].map((_, idx) => (
-            <div key={idx} className="p-3 bg-[#F5EFE6] border border-[#DCD2C3] rounded-2xl flex justify-between items-center w-full shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
+            <div key={idx} className="p-3 bg-bg2 border border-border2 rounded-2xl flex justify-between items-center w-full shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
               <div className="flex items-center gap-3 flex-1">
                 <Skeleton variant="circle" className="w-10 h-10" />
                 <div className="flex-1">
@@ -58,7 +58,7 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
           const style = getOrbStyle(idx);
           const isIncome = exp.type === 'income';
           return (
-            <div key={exp.id} className="p-3 bg-[#F5EFE6] border border-[#DCD2C3] rounded-2xl flex justify-between items-center text-sm shadow-[0_2px_12px_rgba(220,205,185,0.15)] transition group w-full">
+            <div key={exp.id} className="p-3 bg-bg2 border border-border2 rounded-2xl flex justify-between items-center text-sm shadow-[0_2px_12px_rgba(220,205,185,0.15)] transition group w-full">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div>
                   <p className="font-bold text-ink truncate max-w-[160px] text-sm">{exp.title}</p>
@@ -93,7 +93,7 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
       
       <button 
         onClick={onOpenAll}
-        className="mt-3 w-full py-2 bg-[#F5EFE6] border border-[#DCD2C3] text-ink2 rounded-xl font-bold text-xs hover:bg-[#EDDAB4]/20 transition shadow-sm"
+        className="mt-3 w-full py-2 bg-bg2 border border-border2 text-ink2 rounded-xl font-bold text-xs hover:bg-border2/20 transition shadow-sm"
       >
         View All 
       </button>

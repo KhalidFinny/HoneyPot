@@ -11,7 +11,7 @@ export default function LoadingOverlay() {
 
   return (
     <motion.div 
-      className="fixed inset-0 bg-[#F5EFE6] flex flex-col items-center justify-center p-6 z-50"
+      className="fixed inset-0 bg-bg2 flex flex-col items-center justify-center p-6 z-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

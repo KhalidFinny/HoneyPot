@@ -6,7 +6,7 @@ interface SkeletonProps {
 }
 
 export default function Skeleton({ className = '', variant = 'rect' }: SkeletonProps) {
-  const baseClasses = "bg-[#F2EBDA]/40 relative overflow-hidden"
+  const baseClasses = "bg-bg2/50 relative overflow-hidden"
   let variantClasses = ""
 
   if (variant === 'text') {

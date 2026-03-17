@@ -38,7 +38,7 @@ export default function CategoryTracker({ transactions = [], curr, t }: Category
   const totalSpent = Object.values(spentByCategory).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-[#F5EFE6] border border-[#DCD2C3] p-4 rounded-[24px] shadow-[0_2px_12px_rgba(220,205,185,0.15)]">
+    <div className="w-full max-w-sm flex flex-col items-start mt-4 bg-bg2 border border-border2 p-4 rounded-[24px] shadow-sm">
       <h3 className="text-sm font-sans font-bold text-ink mb-3 tracking-wide">{t?.categories || 'Category Spent'}</h3>
       <div className="flex flex-col gap-3 w-full">
         {categories.map((cat) => {

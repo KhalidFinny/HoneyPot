@@ -36,7 +36,7 @@ export default function CustomSelect({ value, options, onChange, label }: Custom
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-[#F2EBDA]/40 border border-[#DCD2C3] rounded-2xl px-4 py-2.5 text-sm text-ink font-bold flex justify-between items-center focus:outline-none focus:border-ink transition shadow-sm"
+        className="w-full bg-bg2/50 border border-border2 rounded-2xl px-4 py-2.5 text-sm text-ink font-bold flex justify-between items-center focus:outline-none focus:border-ink transition shadow-sm"
       >
         <span>{selectedItem?.label}</span>
         <ChevronDown className={`w-4 h-4 text-ink3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
@@ -49,7 +49,7 @@ export default function CustomSelect({ value, options, onChange, label }: Custom
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-1.5 bg-[#FFFDF9] border border-[#DCD2C3] rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto scrollbar-none"
+            className="absolute z-50 w-full mt-1.5 bg-bg border border-border2 rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto scrollbar-none"
           >
             {options.map((opt) => {
               const isSelected = opt.value === value;
@@ -62,7 +62,7 @@ export default function CustomSelect({ value, options, onChange, label }: Custom
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-4 py-2.5 text-sm font-bold flex justify-between items-center transition ${
-                    isSelected ? "bg-ink text-white" : "text-ink hover:bg-[#F2EBDA]/50"
+                    isSelected ? "bg-ink text-bg" : "text-ink hover:bg-bg2/50"
                   }`}
                 >
                   <span>{opt.label}</span>
