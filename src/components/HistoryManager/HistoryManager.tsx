@@ -132,7 +132,7 @@ export default function HistoryManager({ expenses = [], curr, t }: HistoryManage
                         />
                       </div>
                     ) : (
-                      <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right`}>
+                      <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right max-w-[120px]`}>
                         {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                       </p>
                     )}

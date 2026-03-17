@@ -101,7 +101,7 @@ export default function HistoryList({ expenses = [], curr, t, onOpenAll, isLoadi
                      </div>
                    </div>
                    <div className="flex items-center gap-2 justify-end min-w-0 flex-1">
-                     <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right`}>
+                     <p className={`font-sans font-extrabold text-sm ${isIncome ? 'text-grd' : 'text-ink'} truncate text-right max-w-[120px]`}>
                        {isIncome ? '+' : '-'}{symbol}{(exp.amount * rate).toLocaleString(undefined, { minimumFractionDigits: curr?.decimals ?? 2, maximumFractionDigits: curr?.decimals ?? 2 })}
                      </p>
 
